@@ -1,0 +1,62 @@
+<!--Note: Order matters here, be careful!-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <!--Loads ag-Grid scripts from 'unpkg' CDN (Content Delivery Network)-->
+    <script src="https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.noStyle.js"></script> <!--ag-Grid component-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!--Stylesheets-->
+    <link rel="stylesheet" href="https://unpkg.com/ag-grid-community/dist/styles/ag-grid.css"> <!--grid structure stylesheet-->
+    <link rel="stylesheet" href="https://unpkg.com/ag-grid-community/dist/styles/ag-theme-balham-dark.css"> <!--grid theme-->
+    <link rel="icon" href="https://www.mediakind.com/wp-content/themes/mediakindweb/assets/images/favicons/favicon-32x32.png"> <!--Favicon URL-->
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./resources/css/view-plans.css" type="text/css">
+  </head>
+  <body>
+    <div id="title"><h1>MediaKind Workforce Planning Tool</h1></div>
+
+    <div id="toolbar">
+      <button id="createNewPlan" class="darkblue ghost">Create New Plan</button>
+      <button onclick="deletePlan()" class="pink ghost">Delete Plan</button>
+      <button id="loadPlan" onclick="location.href = './grid.html';" class="blue ghost">Load Plan</button>
+      <button onclick="manageUsers()" class="darkblue ghost">Manage Users</button>
+    </div>
+
+    <div id="newPlan">
+      <form id="planForm" action="#" method="get">
+        <label>Plan Name:  </label><input id="newPlanName" type="text">
+      </form>
+      <form id="columnForm" action="#" method="get">
+        <p>
+          <label>Column Name:  </label><input type="text">
+          <span class="removeCol"><button type="button" name="removeColumn">Remove</button></span>
+        </p>
+        <p>
+          <span class="addCol"><button type="button" name="addColumn">Add Column</button></span>
+        </p>
+      </form>
+      <form id="pagesForm" action="#" method="get">
+        <p>
+          <label>Page Name:  </label><input type="text">
+          <span class="removePage"><button type="button">Remove</button></span>
+        </p>
+        <p>
+          <span class="addPage"><button type="button">Add Page</button></span>
+        </p>
+      </form>
+      <button onclick="createNewPlan()"><b>Confirm</b></button>
+    </div>
+
+    <div id="tableContainer">
+      <div id="grid" class="ag-theme-balham-dark"></div>
+    </div>
+
+    <!--AWS SDK stuff-->
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.283.1.min.js"></script>
+    <!--Our scripts-->
+    <script src="./resources/js/file.js"></script>
+    <script src="./resources/js/get-plans.js"></script>
+    <script src="./resources/js/view-plans.js"></script>
+    <script src="./resources/js/csvparser.js"></script>
+  </body>
+</html>

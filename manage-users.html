@@ -1,0 +1,33 @@
+<!--Note: Order matters here, be careful!-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <!--Loads ag-Grid scripts from 'unpkg' CDN (Content Delivery Network)-->
+    <script src="https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.noStyle.js"></script> <!--ag-Grid component-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!--Stylesheets-->
+    <link rel="stylesheet" href="https://unpkg.com/ag-grid-community/dist/styles/ag-grid.css"> <!--grid structure stylesheet-->
+    <link rel="stylesheet" href="https://unpkg.com/ag-grid-community/dist/styles/ag-theme-balham-dark.css"> <!--grid theme-->
+    <link rel="icon" href="https://www.mediakind.com/wp-content/themes/mediakindweb/assets/images/favicons/favicon-32x32.png"> <!--Favicon URL-->
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./resources/css/view-plans.css" type="text/css">
+  </head>
+  <body>
+    <div id="title"><h1>MediaKind Workforce Planning Tool</h1></div>
+
+    <div id="toolbar">
+      <button id="saveUsers" class="darkblue ghost" onclick="saveChangesToUserInfo()">Save Changes</button>
+    </div>
+
+    <div id="tableContainer">
+      <div id="grid" class="ag-theme-balham-dark"></div>
+    </div>
+
+    <!--AWS SDK stuff-->
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.283.1.min.js"></script>
+    <!--Our scripts-->
+    <script src="./resources/js/csvparser.js"></script>
+    <script src="./resources/js/manage-users.js"></script>
+    <script src="./resources/js/accounts.js"></script>
+  </body>
+</html>

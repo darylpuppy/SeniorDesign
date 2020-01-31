@@ -1,0 +1,4 @@
+[
+  {"Email":"SuperUser","Password":"Workforce1!","Permission":"S"},
+  {"Email":"RegularUser","Password":"Workforce1!","Permission":"R"}
+]

@@ -1,0 +1,72 @@
+<!--Note: Order matters here, be careful!-->
+<!doctype html>
+<html lang="en">
+  <head>
+    <!--Loads ag-Grid scripts from 'unpkg' CDN (Content Delivery Network)-->
+    <script src="https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.noStyle.js"></script> <!--ag-Grid component-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!--Stylesheets-->
+    <link rel="stylesheet" href="https://unpkg.com/ag-grid-community/dist/styles/ag-grid.css"> <!--grid structure stylesheet-->
+    <link rel="stylesheet" href="https://unpkg.com/ag-grid-community/dist/styles/ag-theme-balham-dark.css"> <!--grid theme-->
+    <link rel="icon" href="https://www.mediakind.com/wp-content/themes/mediakindweb/assets/images/favicons/favicon-32x32.png"> <!--Favicon URL-->
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./resources/css/grid.css" type="text/css">
+  </head>
+
+  <body>
+    <div id="title"><h1>MediaKind Workforce Planning Tool</h1></div>
+
+    <div id="toolbar">
+      <button onclick="savePlan()" class="blue ghost">Save Changes</button>
+      <button onclick="openSaveAs()" class="darkblue ghost">Save As</button>
+      <div id="saveAsForm">
+        <div class="form-container">
+          <h2>Save plan as: </h2>
+          <input type="text" id="planName" placeholder="New Plan" name="planName" required>
+          <button type="submit" class="btn" onclick="savePlan()">Save</button>
+          <button type="button" class="btn cancel" onclick="closeSaveAs()">Cancel</button>
+        </div>
+      </div>
+      <button id="loadPlan" onclick="location.href='view-plans.html';" class="pink ghost">Create/View Plans</button>
+      <button onclick="addRow()" class="green ghost">Add Row</button>
+      <button onclick="removeRow()" class="red ghost">Remove Row</button>
+      <button id="toggleSuperuserControls" class="pink ghost">Edit Header</button>
+      <p></p>
+      <div id="propContainer">
+        <div id="propagateForwardSwitch">
+          <label>Propagate<br/>Forward?<input type="checkbox" class="ios-switch" id="propagateForward"/>
+            <div><div>
+            </div></div>
+          </label>
+        </div>
+        <div id="propagateBackwardSwitch">
+          <label>Propogate<br/>Backward?<input type="checkbox" class="ios-switch" id="propagateBackward"/>
+            <div><div>
+            </div></div>
+          </label>
+        </div>
+    </div>
+    </div>
+
+    <div id="superuserControls">
+      <form id="selectHeader">
+        <select id="headerList">
+          <option>Choose a header</option>
+        </select>
+      </form>
+      <input id="newHeader" type="text" value="New Column Name">
+      <button onclick="editHeaderName()"><b>Confirm</b></button>
+    </div>
+
+    <div id="tableContainer">
+      <div id="grid" class="ag-theme-balham-dark"></div>
+    </div>
+
+    <!--AWS SDK stuff-->
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.283.1.min.js"></script>
+    <!--Our scripts-->
+    <script src="./resources/js/file.js"></script>
+    <script src="./resources/js/main.js"></script>
+    <script src="./resources/js/csvparser.js"></script>
+  </body>
+</html>

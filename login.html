@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <title>Workforce Planning Login Page</title>
+    <link rel="stylesheet" type="text/css" href="./resources/css/login.css">
+    <link rel="icon" href="https://www.mediakind.com/wp-content/themes/mediakindweb/assets/images/favicons/favicon-32x32.png"> <!--Favincon URL-->
+  </head>
+
+  <body>
+    <div class="loginbox">
+    <img src="./resources/images/login.png" class="icon">
+      <h1>Login Here</h1>
+      <form id="loginForm" onsubmit="return checkCredentials()">
+        <p>Email</p>
+        <input type="text" name="email" placeholder="Email">
+        <p>Password</p>
+        <input type="password" name="password" placeholder="Password">
+        <input type="submit" name="" value="Submit">
+        <a href="create-account.html">Create an account</a>
+      </form>
+    </div>
+  </body>
+
+  <script src="https://sdk.amazonaws.com/js/aws-sdk-2.283.1.min.js"></script>
+  <script src="resources/js/accounts.js"></script>
+</html>

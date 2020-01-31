@@ -1,0 +1,92 @@
+[
+	{
+		"editable": true,
+		"resizable": true,
+		"filter": false,
+		"sortable": false,
+		"headerName": "ID",
+		"field": "ID",
+		"colID": "ID"
+	},
+	{
+		"editable": true,
+		"resizable": true,
+		"filter": false,
+		"sortable": false,
+		"headerName": "Count",
+		"field": "Count",
+		"colID": "Count"
+	},
+	{
+		"editable": true,
+		"resizable": true,
+		"filter": false,
+		"sortable": false,
+		"headerName": "Location",
+		"field": "Location",
+		"colID": "Location"
+	},
+	{
+		"editable": true,
+		"resizable": true,
+		"filter": false,
+		"sortable": false,
+		"headerName": "Type",
+		"field": "Type",
+		"colID": "Type"
+	},
+	{
+		"editable": true,
+		"resizable": true,
+		"filter": false,
+		"sortable": false,
+		"headerName": "Leader",
+		"field": "Leader",
+		"colID": "Leader"
+	},
+	{
+		"editable": true,
+		"resizable": true,
+		"filter": false,
+		"sortable": false,
+		"headerName": "2019 Plan",
+		"field": "2019 Plan",
+		"colID": "2019 Plan"
+	},
+	{
+		"editable": true,
+		"resizable": true,
+		"filter": false,
+		"sortable": false,
+		"headerName": "Is Required",
+		"field": "Is Required",
+		"colID": "Was Required"
+	},
+	{
+		"editable": true,
+		"resizable": true,
+		"filter": false,
+		"sortable": false,
+		"headerName": "Fired?",
+		"field": "Fired?",
+		"colID": "Property 1"
+	},
+	{
+		"editable": true,
+		"resizable": true,
+		"filter": false,
+		"sortable": false,
+		"headerName": "Property 2",
+		"field": "Property 2",
+		"colID": "Property 2"
+	},
+	{
+		"editable": true,
+		"resizable": true,
+		"filter": false,
+		"sortable": false,
+		"headerName": "Property 3",
+		"field": "Property 3",
+		"colID": "Property 3"
+	}
+]
