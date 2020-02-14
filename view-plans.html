@@ -27,13 +27,26 @@
         <label>Plan Name:  </label><input id="newPlanName" type="text">
       </form>
       <form id="columnForm" action="#" method="get">
-        <p>
-          <label>Column Name:  </label><input type="text">
-          <span class="removeCol"><button type="button" name="removeColumn">Remove</button></span>
-        </p>
-        <p>
-          <span class="addCol"><button type="button" name="addColumn">Add Column</button></span>
-        </p>
+        <div class="colInfo">
+          <label>Column Name:  </label><input class="colName" type="text"><div></div>
+		  <label>Type: </label>
+		  <select class="typeSelect">
+			  <option value="int">Integer</option>
+			  <option value="decimal">Decimal</option>
+			  <option value="text">Text</option>
+			  <option value="enum">Enumerated</option>
+		  </select>
+		  <button class="darkblue ghost toggleEnums enumOnly" style="display: none">Edit values</button>
+          <button class="removeParent" style="display:inline" type="button" name="removeColumn">Remove</button>
+		  <span class="enumOnly" style="display:none">
+			<p>
+				<input class="enumName" type="text"/>
+				<button type="button" class="removeParent">Remove</button>
+			</p>
+			<button class="addFirstSibling" type="button">Add Value</button>
+		  </span>
+        </div>
+        <span class="addFirstSibling"><button type="button" name="addColumn">Add Column</button></span>
       </form>
       <form id="pagesForm" action="#" method="get">
         <p>
