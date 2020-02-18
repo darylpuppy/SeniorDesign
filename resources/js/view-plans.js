@@ -117,12 +117,14 @@ $('#createNewPlan').click(function() {
   });
 });
 
-$(".addCol").click(function() {
-    $("#columnForm > p:first-child").clone(true).insertBefore("#columnForm > p:last-child");
+$(".addFirstSibling").click(function() {
+	var parent = $(this).parent();
+	var siblings = $(this).siblings();
+    $(this).siblings().first().clone(true).insertBefore($(this));
     return false;
 });
 
-$(".removeCol").click(function() {
+$(".removeParent").click(function() {
     $(this).parent().remove();
 });
 
@@ -135,27 +137,61 @@ $(".removePage").click(function() {
     $(this).parent().remove();
 });
 
+$(".toggleEnums").click(function(){
+	var enumEditor = $(this).siblings("span")[0];
+	if (enumEditor.style.display === "none"){
+		enumEditor.style.display = "inline-table";
+	}
+	else{
+		enumEditor.style.display = "none";
+	}
+});
+
+$(".typeSelect").change(function(){
+	var value = $(this).val();
+	if (value == "enum"){
+		$(this).siblings(".toggleEnums").css("display", "inline");
+	}
+	else{
+		var siblings = $(this).siblings(".enumOnly");
+		$(this).siblings(".enumOnly").css("display", "none");
+	}
+})
+
 function createNewPlan() {
+	console.log("creating a new plan");
     if(sessionStorage.getItem("permission") === "S"){
       // getting all the plan data from the html form
-      var columnElements = document.getElementById("columnForm").elements;
+      var columns = $("#columnForm > .colInfo");
       var pageElements = document.getElementById("pagesForm").elements;
       planNameToCreate = document.getElementById("newPlanName").value;
       // creating a JSON object out of columnDefinitions, will have to tweak
       // after implementing pages
-      for(var i = 0 ; i < columnElements.length; i++) {
-          if(columnElements.item(i).value) {
+      for(var i = 0 ; i < columns.length; i++) {
+		console.log(columns[i]);
+	      var column = columns[i];
+		  var types = "";
+		  if ($(columns[i]).children(".typeSelect").first().val() === "enum"){
+			var enumVals = $(column).find(".enumName");
+			for (var j = 0;j < enumVals.length;j++){
+				types += $(enumVals[j]).val() + " ";
+			}
+		  }
+          if($(column).find(".colName").first().val()) {
             var columnInfo = {
-              "editable": true,
+				"editable": true,
           		"resizable": true,
           		"filter": false,
           		"sortable": false,
-              "headerName": columnElements.item(i).value,
-              "field": columnElements.item(i).value,
-              "colID": columnElements.item(i).value
+				"headerName": $(column).find(".colName").first().val(),
+				"field": $(column).find(".colName").first().val(),
+				"colID": $(column).find(".colName").first().val(),
+				"type": $(column).find(".typeSelect").first().val(),
+				"enums": types
             };
+			console.log(columnInfo);
             columnDefinitions.push(columnInfo);
-            emptyRow[columnElements.item(i).value] = "";
+            emptyRow[$(column).find(".typeSelect").first().val()] = "";
           }
       }
       // Eliminate remove buttons and add page button from total element count
@@ -181,7 +217,6 @@ function manageUsers(){
   else {
     alert("You do not have permission to manage users");
   }
-
 }
 
 function deletePlan(){
