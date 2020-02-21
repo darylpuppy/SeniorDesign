@@ -50,6 +50,7 @@ function loadPlanNames(plans){
 
 // Save plan of specified name
 function uploadNewPlan(rowData, colDef) {
+	console.log("uploading new plan");
   var planNameToCreate = getPlanNameToCreate();
   var folderKey = "plans/" + encodeURIComponent(planNameToCreate) + "/";
 
@@ -57,16 +58,16 @@ function uploadNewPlan(rowData, colDef) {
 
   s3.headObject({ Key: folderKey }, function(err, data) {
     if (!err) {
-      //return alert("Plan already exists.");
+      return alert("Plan already exists.");
     }
     if (err.code !== "NotFound") {
-      //return alert("There was an error creating your plan: " + err.message);
+      return alert("There was an error creating your plan: " + err.message);
     }
     s3.putObject({ Key: folderKey }, function(err, data) {
       if (err) {
-        //return alert("There was an error creating your plan: " + err.message);
+        return alert("There was an error creating your plan: " + err.message);
       }
-      //alert("Successfully created plan.");
+      alert("Successfully created plan.");
       var newPlanRow = '[{"planName": "' + planNameToCreate + '"}]';
       gridOptions.api.updateRowData({add: JSON.parse(newPlanRow)});
     });
