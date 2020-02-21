@@ -20,7 +20,6 @@ var s3 = new AWS.S3({
 // S = Super User
 function getNewAccountInfo(){
   var accountForm = document.getElementById("createAccount");
-  console.log(accountForm.elements["email"].value);
 
   if(accountForm.elements["password1"].value != accountForm.elements["password2"].value){
     alert("The passwords do not match");
@@ -44,10 +43,8 @@ function appendToUsersFile(user){
     Key: "users.json"
   }, function (err, data) {
       if(err) {
-        console.log("Error retrieving file");
         return false;
       } else {
-        console.log("File retrieved");
         data = data.Body.toString();
         userList = JSON.parse(data);
         userJSON = JSON.parse(user);
@@ -102,7 +99,6 @@ function checkCredentials(){
         return false;
       }
       else {
-        console.log("File retrieved");
         data = data.Body.toString();
         userList = JSON.parse(data);
 

@@ -17,11 +17,14 @@
 
     <div id="toolbar">
       <button id="saveUsers" class="darkblue ghost" onclick="saveChangesToUserInfo()">Save Changes</button>
+	  <button id="cancel" class="darkblue ghost" style="float: right" onclick="returnToPlans()">Cancel</button>
     </div>
 
-    <div id="tableContainer">
-      <div id="grid" class="ag-theme-balham-dark"></div>
+    <div id="tableContainer" style="padding-bottom: 50%">
+      <div id="grid" class="ag-theme-balham-dark" style="width: 100%"></div>
     </div>
+		<label for="password" style="color: white">New Password</label>
+		<input type="text" id="password" placeholder="New Password"/>
 
     <!--AWS SDK stuff-->
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.283.1.min.js"></script>

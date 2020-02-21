@@ -211,12 +211,7 @@ function createNewPlan() {
 }
 
 function manageUsers(){
-  if(sessionStorage.getItem("permission") === "S"){
     location.href = './manage-users.html';
-  }
-  else {
-    alert("You do not have permission to manage users");
-  }
 }
 
 function deletePlan(){
