@@ -50,6 +50,27 @@ var countDef = {
   "field": "Count",
   "colID": "Count"
 };
+
+var leaderDef = {
+  "editable": true,
+  "resizable": true,
+  "filter": false,
+  "sortable": false,
+  "headerName": "Leader",
+  "field": "Leader",
+  "colID": "Leader"
+};
+
+var nameDef = {
+  "editable": true,
+  "resizable": true,
+  "filter": false,
+  "sortable": false,
+  "headerName": "Name",
+  "field": "Name",
+  "colID": "Name"
+};
+
 // delete these two maybe
 var typeDef = {
   "editable": true,
@@ -76,9 +97,11 @@ emptyRow["Location"] = "";
 emptyRow["Type"] = "";
 
 columnDefinitions.push(idDef);
-columnDefinitions.push(countDef);
+columnDefinitions.push(nameDef);
+columnDefinitions.push(leaderDef);
 columnDefinitions.push(locationDef);
 columnDefinitions.push(typeDef);
+columnDefinitions.push(countDef);
 
 rowDefinitions.emptyRow = emptyRow;
 

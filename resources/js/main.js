@@ -165,33 +165,41 @@ function getSelectedRowToRemove(callback) {
 // Removes a selected row across all pages
 // WARNING: Currently does not work properly, disabled.
 function removeRow(selectedRow) {
-  /*
+  
   var row;
   getSelectedRowToRemove(function(selectedRow) {
     row = selectedRow[0]; // Since row selection is set to singlular, we only want the first
   })                      // element in the list of selected rows
-
+  
+  //console.log(selectedRow)
   // Get the index for the selected row
   var index = row.childIndex;
+  
   console.log("Row is at index: "+index);
 
   // Find the "relative" row location for each page and remove rows
   // from page 1 onward
-  index = index % pageSize;
+  //index = index % pageSize;
+  
 
   // Calculate number of *full* pages in the plan
   numOfPages = Math.floor((numOfRows()) / pageSize);
 
+
   for(i = 1; i <= numOfPages; i++) {
+    console.log("deleting rows " + index)
+    console.log("deleting rowID " + selectedRow)
+    //console.log("row Data: " + selectedRow.data)
     removeRowAtIndex(index);
-    index = (index + pageSize);
+    index = (index + pageSize + i);
+    
   }
 
   // Decrement the number of rows to show per page and update grid
   pageSize -= 1;
   gridOptions.api.paginationSetPageSize(Number(pageSize));
   gridOptions.api.refreshCells();
-  */
+  
 }
 
 function editHeaderName() {
