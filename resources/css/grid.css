@@ -19,6 +19,15 @@ body {
   border-radius: 15px 30px;
 }
 
+#logOut {
+  color: #ffffff;
+  position: relative;
+  bottom: 110px;
+  float: right;
+  margin: 4px;
+  border-radius: 5px;
+}
+
 #toolbar {
   /*border-style: solid;*/
   /*border-color: #009FE2;*/

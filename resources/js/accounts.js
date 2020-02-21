@@ -85,10 +85,20 @@ function appendToUsersFile(user){
   })
   return false;
 }
+/*
+window.onloadstart = function logOut(){
+
+  loginForm = document.getElementById("loginForm");
+  loginForm.elements["email"] = this.undefined
+  loginForm.elements["password"] = this.undefined
+  checkCredentials()
+  sessionStorage.setItem('email', undefined);
+  sessionStorage.setItem('permission','R');
+}
+*/
 
 // check if the username and password match in the users.json file
 function checkCredentials(){
-
   // download the users.json file from the S3 bucket
   file = s3.getObject({
     Bucket: bucketName,
