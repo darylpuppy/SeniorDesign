@@ -152,6 +152,7 @@ function removeRowAtIndex(targetIndex) {
     if(rowNode.index == targetIndex) {
         console.log("Removing row "+index);
         gridOptions.api.updateRowData({remove: [rowNode.data]});
+        
     }
   });
 }
@@ -180,24 +181,20 @@ function removeRow(selectedRow) {
   // Find the "relative" row location for each page and remove rows
   // from page 1 onward
   //index = index % pageSize;
-  
+  var selectedData = gridOptions.api.getSelectedRows();
+  var res = gridOptions.api.updateRowData({remove: selectedData});
 
   // Calculate number of *full* pages in the plan
   numOfPages = Math.floor((numOfRows()) / pageSize);
 
 
-  for(i = 1; i <= numOfPages; i++) {
-    console.log("deleting rows " + index)
-    console.log("deleting rowID " + selectedRow)
-    //console.log("row Data: " + selectedRow.data)
-    removeRowAtIndex(index);
-    index = (index + pageSize + i);
-    
-  }
-
+  //console.log("row Data: " + selectedRow.data)
+  removeRowAtIndex(index);
   // Decrement the number of rows to show per page and update grid
-  pageSize -= 1;
-  gridOptions.api.paginationSetPageSize(Number(pageSize));
+
+
+
+
   gridOptions.api.refreshCells();
   
 }
