@@ -259,7 +259,7 @@ function loadPlanData(file) { //callback from downloadFile
 }
 
 function loadPlanDef(file) { //callback from downloadFile
-  gridOptions.api.setColumnDefs(JSON.parse(file));
+  gridOptions.api.setColumnDefs(JSON.parse(file).columns);
 }
 
 function loadPlanProp(file) {

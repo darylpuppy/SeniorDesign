@@ -27,7 +27,7 @@ var gridOptions = {
 var planToLoad = "";
 var planToDelete = "";
 var planNameToCreate = "";
-var columnDefinitions = [];
+var columnDefinitions = {pivotColumn: {}, columns: []};
 var rowDefinitions = [];
 var emptyRow = {};
 
@@ -96,12 +96,12 @@ emptyRow["Count"] = "";
 emptyRow["Location"] = "";
 emptyRow["Type"] = "";
 
-columnDefinitions.push(idDef);
-columnDefinitions.push(nameDef);
-columnDefinitions.push(leaderDef);
-columnDefinitions.push(locationDef);
-columnDefinitions.push(typeDef);
-columnDefinitions.push(countDef);
+columnDefinitions.columns.push(idDef);
+columnDefinitions.columns.push(nameDef);
+columnDefinitions.columns.push(leaderDef);
+columnDefinitions.columns.push(locationDef);
+columnDefinitions.columns.push(typeDef);
+columnDefinitions.columns.push(countDef);
 
 rowDefinitions.emptyRow = emptyRow;
 
@@ -190,6 +190,7 @@ function createNewPlan() {
       var pageElements = document.getElementById("pagesForm").elements;
       planNameToCreate = document.getElementById("newPlanName").value;
       var pivotName = document.getElementById("GivenPivotName").value; // save the name of the pivote value
+	  columnDefinitions.pivotColumn.name = pivotName;
       // creating a JSON object out of columnDefinitions, will have to tweak
       // after implementing pages
       for(var i = 0 ; i < columns.length; i++) {
@@ -215,7 +216,7 @@ function createNewPlan() {
 				"enums": types
             };
 			console.log(columnInfo);
-            columnDefinitions.push(columnInfo);
+            columnDefinitions.columns.push(columnInfo);
             emptyRow[$(column).find(".typeSelect").first().val()] = "";
           }
       }
