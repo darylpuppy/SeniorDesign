@@ -114,7 +114,7 @@ function numOfRows() {
 function addRow() {
   // Calculate the number of "pages" for the grid
   // For application, these probably represent months
-  numOfPages = (numOfRows()) / pageSize;
+  //numOfPages = (numOfRows()) / pageSize;
   t = 0;
 
   // Create a random ID number for the row, consistent across pages
@@ -123,14 +123,10 @@ function addRow() {
   };
 
   // Add a new row to each page at incrementing index (see below)
-  for(i = 1; i <= numOfPages; i++) {
-    index = (pageSize * i) + t; // to insert at same relative pos. for each page
-    addRowAtIndex(index, newRow);
-    t += 1; // increment at each page to account for the new row
-  }
+  index = i ; // to insert at same relative pos. for each page
+  addRowAtIndex(index, newRow);
+
   // Increment the number of rows to show per page and update grid
-  pageSize += 1;
-  gridOptions.api.paginationSetPageSize(Number(pageSize));
 }
 
 // When multiple pages exist, must add row at same relative
