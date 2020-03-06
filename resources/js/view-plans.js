@@ -188,6 +188,7 @@ function createNewPlan() {
       var columns = $("#columnForm > .colInfo");
       var pageElements = document.getElementById("pagesForm").elements;
       planNameToCreate = document.getElementById("newPlanName").value;
+      var pivotName = document.getElementById("GivenPivotName").value; // save the name of the pivote value
       // creating a JSON object out of columnDefinitions, will have to tweak
       // after implementing pages
       for(var i = 0 ; i < columns.length; i++) {
