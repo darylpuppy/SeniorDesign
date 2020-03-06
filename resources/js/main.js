@@ -33,7 +33,9 @@ function initGrid() {
   // Find the grid div element in index.html
   var eGridDiv = document.querySelector('#grid');
   var tableHeader = document.querySelector('#tableHeader');
-  $(tableHeader).text("Header");
+  //var name = document.getElementById('#newPlanName').value;
+  var name2 = 'aziz';
+  $(tableHeader).text("Pivot Name " + name2 );
 
   // Create the grid passing in the div to use together with the columns & data we want to use
   new agGrid.Grid(eGridDiv, gridOptions);
