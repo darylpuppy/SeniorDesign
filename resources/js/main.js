@@ -60,9 +60,6 @@ function gridReady() {
 // propogate mode is enabled and if so, automatically
 // edits all rows in that position for all pages
 function cellValueChanged(event) {
-  propagateForwardMode = document.getElementById("propagateForward").checked;
-  propagateBackwardMode = document.getElementById("propagateBackward").checked;
-
   // Gets the name of the column that was edited and that row's index in the grid
   colEdited = event.column.colId;
   editIndex = event.node.childIndex;
@@ -114,19 +111,14 @@ function numOfRows() {
 function addRow() {
   // Calculate the number of "pages" for the grid
   // For application, these probably represent months
-  //numOfPages = (numOfRows()) / pageSize;
   t = 0;
-
   // Create a random ID number for the row, consistent across pages
   var newRow = {
     ID: randRange(10000000, 99999999)
   };
-
-  // Add a new row to each page at incrementing index (see below)
   index = i ; // to insert at same relative pos. for each page
   addRowAtIndex(index, newRow);
 
-  // Increment the number of rows to show per page and update grid
 }
 
 // When multiple pages exist, must add row at same relative
@@ -143,16 +135,6 @@ function getRowAtIndex(targetIndex, callback) {
   });
 }
 
-function removeRowAtIndex(targetIndex) {
-  gridOptions.api.forEachNode( function(rowNode, index) {
-    if(rowNode.index == targetIndex) {
-        console.log("Removing row "+index);
-        gridOptions.api.updateRowData({remove: [rowNode.data]});
-        
-    }
-  });
-}
-
 // Callback function to receive the selected node for removal
 function getSelectedRowToRemove(callback) {
   var selectedRow = gridOptions.api.getSelectedNodes();
@@ -160,7 +142,6 @@ function getSelectedRowToRemove(callback) {
 }
 
 // Removes a selected row across all pages
-// WARNING: Currently does not work properly, disabled.
 function removeRow(selectedRow) {
   
   var row;
@@ -168,28 +149,14 @@ function removeRow(selectedRow) {
     row = selectedRow[0]; // Since row selection is set to singlular, we only want the first
   })                      // element in the list of selected rows
   
-  //console.log(selectedRow)
   // Get the index for the selected row
   var index = row.childIndex;
-  
   console.log("Row is at index: "+index);
 
   // Find the "relative" row location for each page and remove rows
   // from page 1 onward
-  //index = index % pageSize;
   var selectedData = gridOptions.api.getSelectedRows();
   var res = gridOptions.api.updateRowData({remove: selectedData});
-
-  // Calculate number of *full* pages in the plan
-  numOfPages = Math.floor((numOfRows()) / pageSize);
-
-
-  //console.log("row Data: " + selectedRow.data)
-  removeRowAtIndex(index);
-  // Decrement the number of rows to show per page and update grid
-
-
-
 
   gridOptions.api.refreshCells();
   
@@ -253,8 +220,6 @@ function loadPlanDef(file) { //callback from downloadFile
 
 function loadPlanProp(file) {
   props = JSON.parse(file);
-  pageSize = props.pageSize;
-  gridOptions.api.paginationSetPageSize(Number(pageSize));
 }
 
 function randRange(min, max) {

@@ -73,8 +73,6 @@ function savePlan() {
   rowData = JSON.parse(convertCSV(rowData));
   rowData.pop();
   rowData = JSON.stringify(rowData);
-  //console.log("Rowdata:");
-  console.log(rowData);
 
   var colDef = getColumnDefs();
   colDef = JSON.stringify(colDef, null, '\t');
