@@ -143,6 +143,7 @@ $('#createNewPlan').click(function() {
 $(".addFirstSibling").click(function() {
 	var parent = $(this).parent();
 	var siblings = $(this).siblings();
+	console.log(siblings);
     $(this).siblings().first().clone(true).insertBefore($(this));
     return false;
 });
