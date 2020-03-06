@@ -32,6 +32,8 @@ initGrid(gridOptions);
 function initGrid() {
   // Find the grid div element in index.html
   var eGridDiv = document.querySelector('#grid');
+  var tableHeader = document.querySelector('#tableHeader');
+  $(tableHeader).text("Header");
 
   // Create the grid passing in the div to use together with the columns & data we want to use
   new agGrid.Grid(eGridDiv, gridOptions);
