@@ -3,7 +3,7 @@
 var gridOptions = {
   animateRows: true,
   rowSelection: 'single',
-  pagination: true,
+  pagination: false,
   paginationPageSize: 50,
 
   // defines default column properties that are inherited
@@ -186,7 +186,6 @@ function createNewPlan() {
     if(sessionStorage.getItem("permission") === "S"){
       // getting all the plan data from the html form
       var columns = $("#columnForm > .colInfo");
-      var pageElements = document.getElementById("pagesForm").elements;
       planNameToCreate = document.getElementById("newPlanName").value;
       // creating a JSON object out of columnDefinitions, will have to tweak
       // after implementing pages
@@ -218,11 +217,9 @@ function createNewPlan() {
           }
       }
       // Eliminate remove buttons and add page button from total element count
-      numOfPages = (pageElements.length/2)-1;
+      numOfPages = 1;
       // Creates an empty row on each page
-      for(var i = 0 ; i < numOfPages; i++) {
-          rowDefinitions.push(emptyRow); // add an empty row to each page
-      }
+      rowDefinitions.push(emptyRow); // add an empty row to each page
       rowDefinitions = JSON.stringify(rowDefinitions);
       columnDefinitions = JSON.stringify(columnDefinitions);
 
