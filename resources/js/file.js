@@ -70,9 +70,11 @@ function savePlan() {
 
   // Converts the grid's data to a CSV, then to a JSON for export
   var rowData = exportCSV();
-  rowData = convertCSV(rowData);
+  rowData = JSON.parse(convertCSV(rowData));
+  rowData.pop();
+  rowData = JSON.stringify(rowData);
   //console.log("Rowdata:");
-  //console.log(rowData);
+  console.log(rowData);
 
   var colDef = getColumnDefs();
   colDef = JSON.stringify(colDef, null, '\t');
