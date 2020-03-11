@@ -1,5 +1,5 @@
 
-// Set options to use in ititializing the grid
+// Set options to use in initializing the grid
 var gridOptions = {
   animateRows: true,
   rowSelection: 'single',
@@ -165,6 +165,7 @@ function createNewPlan() {
       var columns = $("#columnForm > .colInfo");
       var pageElements = document.getElementById("pagesForm").elements;
       planNameToCreate = document.getElementById("newPlanName").value;
+      var pivotName = document.getElementById("GivenPivotName").value; // save the name of the pivote value 
       // creating a JSON object out of columnDefinitions, will have to tweak
       // after implementing pages
       for(var i = 0 ; i < columns.length; i++) {
@@ -193,6 +194,35 @@ function createNewPlan() {
             columnDefinitions.push(columnInfo);
             emptyRow[$(column).find(".typeSelect").first().val()] = "";
           }
+
+      }
+
+      function pivoteValue()
+      {
+
+        for(var i = 0 ; i < pivots.length; i++) {
+          console.log(pivots[i]);
+              var pivot = pivots[i];
+            var types = "";
+            if ($(pivots[i]).children(".typeSelect").first().val() === "enum"){
+           
+        if($(pivot).find(".pivName").first().val()) {
+          var pivotInfo = {
+      "editable": true,
+            "resizable": true,
+            "filter": false,
+            "sortable": false,
+      "headerName": $(pivot).find(".pivName").first().val(),
+      "field": $(pivot).find(".pivName").first().val(),
+      "colID": $(pivot).find(".pivName").first().val(),
+      "type": $(pivot).find(".typeSelect").first().val(),
+      "enums": types
+          };
+    console.log(pivotInfo);
+          columnDefinitions.push(pivotInfo);
+          emptyRow[$(pivot).find(".typeSelect").first().val()] = "";
+        
+
       }
       // Eliminate remove buttons and add page button from total element count
       numOfPages = (pageElements.length/2)-1;
