@@ -33,9 +33,9 @@ function initGrid() {
   // Find the grid div element in index.html
   var eGridDiv = document.querySelector('#grid');
   var tableHeader = document.querySelector('#tableHeader');
-  //var name = document.getElementById('#newPlanName').value;
-  var name2 = 'aziz';
-  $(tableHeader).text("Pivot Name " + name2 );
+  var name = document.querySelector('#GivenPivotName');
+  //var name2 = 'aziz';
+  $(tableHeader).text("Pivot Name " + name );
 
   // Create the grid passing in the div to use together with the columns & data we want to use
   new agGrid.Grid(eGridDiv, gridOptions);
@@ -259,7 +259,7 @@ function loadPlanData(file) { //callback from downloadFile
 }
 
 function loadPlanDef(file) { //callback from downloadFile
-  gridOptions.api.setColumnDefs(JSON.parse(file).columns);
+  gridOptions.api.setColumnDefs(JSON.parse(file));
 }
 
 function loadPlanProp(file) {
