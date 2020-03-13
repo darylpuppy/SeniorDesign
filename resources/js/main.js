@@ -33,9 +33,6 @@ function initGrid() {
   // Find the grid div element in index.html
   var eGridDiv = document.querySelector('#grid');
   var tableHeader = document.querySelector('#tableHeader');
-  var name = document.querySelector('#GivenPivotName');
-  //var name2 = 'aziz';
-  $(tableHeader).text("Pivot Name " + name );
 
   // Create the grid passing in the div to use together with the columns & data we want to use
   new agGrid.Grid(eGridDiv, gridOptions);
@@ -113,6 +110,27 @@ function numOfRows() {
     rows = rows + 1;
   });
   return rows;
+}
+
+function moveForward(){
+	if (this.selectedPivot < this.colData.pivotColumn.types.length){
+		this.savePlan();
+		this.selectedPivot++;
+		updatePivotValue();
+	}
+}
+
+function moveBackward(){
+	if (this.selectedPivot >= 0){
+		this.savePlan();
+		this.selectedPivot--;
+		updatePivotValue();
+	}
+}
+
+function updatePivotValue(){
+	gridOptions.api.setRowData(this.allData[this.selectedPivot].pageData);
+	$("#pivotValue").text(this.colData.pivotColumn.types[this.selectedPivot]);
 }
 
 function addRow() {
@@ -255,11 +273,16 @@ function getColumnDefs() {
 
 // Populate the grid with data passed in via a JSON file
 function loadPlanData(file) { //callback from downloadFile
-  gridOptions.api.setRowData(JSON.parse(file));
+	this.allData = JSON.parse(file);
+  gridOptions.api.setRowData(this.allData[0].pageData);
 }
 
 function loadPlanDef(file) { //callback from downloadFile
-  gridOptions.api.setColumnDefs(JSON.parse(file));
+	this.colData = JSON.parse(file);
+  gridOptions.api.setColumnDefs(this.colData.columns);
+  $(tableHeader).text("Pivot Name " +  this.colData.pivotColumn.name);
+  this.selectedPivot = 0;
+  $("#pivotValue").text(this.colData.pivotColumn.types[this.selectedPivot]);
 }
 
 function loadPlanProp(file) {
