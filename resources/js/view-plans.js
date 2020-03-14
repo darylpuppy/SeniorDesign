@@ -111,7 +111,7 @@ initGrid(gridOptions);
 function initGrid() {
   // Find the grid div element in index.html
   var eGridDiv = document.querySelector('#grid');
-
+  gridOptions.suppressClickEdit=true;
   // Create the grid passing in the div to use together with the columns & data we want to use
   new agGrid.Grid(eGridDiv, gridOptions);
 
@@ -133,22 +133,28 @@ gridOptions.api.addEventListener('cellClicked', cellClicked);
 $('#createNewPlan').click(function() {
   $('#newPlan').toggle('normal', function() {
     if ($('#newPlan').is(":visible")) {
-      console.log("Creating new plan");
+      console.log("Creating new plane");
     } else {
-      console.log("Creating new plan");
+      console.log("Creating new plane");
     }
   });
 });
 
 $(".addFirstSibling").click(function() {
 	var parent = $(this).parent();
-	var siblings = $(this).siblings();
+  var siblings = $(this).siblings();
     $(this).siblings().first().clone(true).insertBefore($(this));
+    console.log($(this).siblings().first().clone(true).insertBefore($(this)))
     return false;
 });
 
 $(".removeParent").click(function() {
+  console.log($(this).first())
+  if($(this).parent())
+  {
+   
     $(this).parent().remove();
+  }
 });
 
 $(".addPage").click(function() {

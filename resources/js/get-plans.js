@@ -11,10 +11,12 @@ AWS.config.update({
   })
 });
 
+// construct a service object 
 var s3 = new AWS.S3({
   apiVersion: "2006-03-01",
   params: { Bucket: bucketName }
 });
+
 
 function downloadPlanDefs(){
   console.log("Loading plan names");
@@ -40,13 +42,14 @@ function downloadPlanDefs(){
     loadPlanNames(plans);
   });
 }
-
+// function that loadPlanNames into row, but it allows it to change later, which should not 
 function loadPlanNames(plans){
   for(i = 0; i < plans.length; i++){
     var rowData = '[{"planName": "' + plans[i] + '"}]';
     gridOptions.api.updateRowData({add: JSON.parse(rowData)});
   }
 }
+
 
 // Save plan of specified name
 function uploadNewPlan(rowData, colDef) {
@@ -55,23 +58,25 @@ function uploadNewPlan(rowData, colDef) {
   var folderKey = "plans/" + encodeURIComponent(planNameToCreate) + "/";
 
   var rowData = getEmptyRow();
+  
 
   s3.headObject({ Key: folderKey }, function(err, data) {
-    if (!err) {
+    if (!err) {    //same planName checked 
       return alert("Plan already exists.");
     }
-    if (err.code !== "NotFound") {
+    if (err.code !== "NotFound") {  //No Colmn name, incorrect Colmn type 
       return alert("There was an error creating your plan: " + err.message);
     }
     s3.putObject({ Key: folderKey }, function(err, data) {
       if (err) {
         return alert("There was an error creating your plan: " + err.message);
       }
-      alert("Successfully created plan.");
+      alert("Successfully created plan."); 
       var newPlanRow = '[{"planName": "' + planNameToCreate + '"}]';
       gridOptions.api.updateRowData({add: JSON.parse(newPlanRow)});
     });
   });
+
 
   // Create a new file with the name of the plan
   var rowDataName = planNameToCreate + "Data.json";
