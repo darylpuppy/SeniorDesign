@@ -143,7 +143,6 @@ $('#createNewPlan').click(function() {
 $(".addFirstSibling").click(function() {
 	var parent = $(this).parent();
 	var siblings = $(this).siblings();
-	console.log(siblings);
     $(this).siblings().first().clone(true).insertBefore($(this));
     return false;
 });
@@ -183,18 +182,15 @@ $(".typeSelect").change(function(){
 })
 
 function createNewPlan() {
-	console.log("creating a new plan");
     if(sessionStorage.getItem("permission") === "S"){
       // getting all the plan data from the html form
       var columns = $("#columnForm > .colInfo");
-      var pageElements = document.getElementById("pagesForm").elements;
+	  var pivotValues = $(".pivotValue");
       planNameToCreate = document.getElementById("newPlanName").value;
-      var pivotName = document.getElementById("GivenPivotName").value; // save the name of the pivote value
-	  columnDefinitions.pivotColumn.name = pivotName;
+
       // creating a JSON object out of columnDefinitions, will have to tweak
       // after implementing pages
       for(var i = 0 ; i < columns.length; i++) {
-		console.log(columns[i]);
 	      var column = columns[i];
 		  var types = "";
 		  if ($(columns[i]).children(".typeSelect").first().val() === "enum"){
@@ -215,21 +211,23 @@ function createNewPlan() {
 				"type": $(column).find(".typeSelect").first().val(),
 				"enums": types
             };
-			console.log(columnInfo);
             columnDefinitions.columns.push(columnInfo);
             emptyRow[$(column).find(".typeSelect").first().val()] = "";
           }
       }
-      // Eliminate remove buttons and add page button from total element count
-      numOfPages = (pageElements.length/2)-1;
-      // Creates an empty row on each page
-      for(var i = 0 ; i < numOfPages; i++) {
-          rowDefinitions.push(emptyRow); // add an empty row to each page
-      }
-      rowDefinitions = JSON.stringify(rowDefinitions);
+
+      columnDefinitions.pivotColumn.name = document.getElementById("pivotName").value; // save the name of the pivote value
+	  columnDefinitions.pivotColumn.types = [];
+	  var allData = [];
+	  for (var pivotValue of pivotValues){
+	  	  columnDefinitions.pivotColumn.types.push($(pivotValue).val());
+		  allData.push({pageName: $(pivotValue).val(), pageData: [emptyRow]})
+	  }
+
+      allData = JSON.stringify(allData);
       columnDefinitions = JSON.stringify(columnDefinitions);
 
-      uploadNewPlan(rowDefinitions, columnDefinitions);
+      uploadNewPlan(allData, columnDefinitions);
     }
     else {
       alert("You do not have permission to create a plan");

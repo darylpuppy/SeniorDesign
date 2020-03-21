@@ -50,11 +50,8 @@ function loadPlanNames(plans){
 
 // Save plan of specified name
 function uploadNewPlan(rowData, colDef) {
-	console.log("uploading new plan");
   var planNameToCreate = getPlanNameToCreate();
   var folderKey = "plans/" + encodeURIComponent(planNameToCreate) + "/";
-
-  var rowData = getEmptyRow();
 
   s3.headObject({ Key: folderKey }, function(err, data) {
     if (!err) {
@@ -70,33 +67,36 @@ function uploadNewPlan(rowData, colDef) {
       alert("Successfully created plan.");
       var newPlanRow = '[{"planName": "' + planNameToCreate + '"}]';
       gridOptions.api.updateRowData({add: JSON.parse(newPlanRow)});
+	  uploadPlanData(rowData, colDef, folderKey);
     });
   });
-
-  // Create a new file with the name of the plan
-  var rowDataName = planNameToCreate + "Data.json";
-  var rowDataFile = new File([rowData], rowDataName);
-  var rowDataFileName = rowDataFile.name;
-
-  var colDefName = planNameToCreate + "Def.json";
-  var colDefFile = new File([colDef], colDefName);
-  var colDefFileName = colDefFile.name;
-
-  // PROPERTIES FILE
-  var propFileName = "properties.json";
-  var properties = {pageSize: 1};
-  var propFile = new File([JSON.stringify(properties)], propFileName);
-
-  var columnDefKey = folderKey + encodeURIComponent(colDefName);
-  var rowDataKey = folderKey + encodeURIComponent(rowDataName);
-  var propFileKey = folderKey + encodeURIComponent(propFileName);
-
-  // Uploads row data, column defs, and properties file to S3
-  uploadFile(rowDataFile, rowDataKey);
-  uploadFile(colDefFile, columnDefKey);
-  uploadFile(propFile, propFileKey);
 }
 
+function uploadPlanData(rowData, colDef, folderKey){
+	console.log(rowData);
+	// Create a new file with the name of the plan
+	var rowDataName = planNameToCreate + "Data.json";
+	var rowDataFile = new File([rowData], rowDataName);
+	var rowDataFileName = rowDataFile.name;
+
+	var colDefName = planNameToCreate + "Def.json";
+	var colDefFile = new File([colDef], colDefName);
+	var colDefFileName = colDefFile.name;
+
+	// PROPERTIES FILE
+	var propFileName = "properties.json";
+	var properties = {pageSize: 1};
+	var propFile = new File([JSON.stringify(properties)], propFileName);
+
+	var columnDefKey = folderKey + encodeURIComponent(colDefName);
+	var rowDataKey = folderKey + encodeURIComponent(rowDataName);
+	var propFileKey = folderKey + encodeURIComponent(propFileName);
+
+	// Uploads row data, column defs, and properties file to S3
+	uploadFile(rowDataFile, rowDataKey);
+	uploadFile(colDefFile, columnDefKey);
+	uploadFile(propFile, propFileKey);
+}
 
 // Upload a file to the S3 bucket
 function uploadFile(file, fileKey, folderName) {
