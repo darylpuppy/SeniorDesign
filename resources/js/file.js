@@ -39,13 +39,13 @@ function downloadPlanData(planName, callback, isDataView) {
   downloadFile(fileName, fileKey, callback, isDataView)
 }
 
-function downloadPlanDef(planName, callback) {
+function downloadPlanDef(planName, callback, isDataView) {
   var fileName = planName + "Def.json";
   var folderName = planName;
   var folderKey = "plans/" + encodeURIComponent(folderName) + "/"; //specifies folder
   var fileKey = folderKey + fileName;
 
-  downloadFile(fileName, fileKey, callback);
+  downloadFile(fileName, fileKey, callback, isDataView);
 }
 
 function downloadPlanProp(planName, callback) {
@@ -69,7 +69,7 @@ function savePlan() {
   // Converts the grid's data to a CSV, then to a JSON for export
   var rowData = exportCSV();
   rowData = JSON.parse(convertCSV(rowData));
-  var currentPage = this.allData.find((page) => page.pageName == this.colData.pivotColumn.types[this.selectedPivot]);	//All of these variables are in main.js
+  var currentPage = this.allData.find((page) => page.pageName == this.pivotColumn.types[this.selectedPivot]);	//All of these variables are in main.js
   currentPage.pageData = rowData;
 
   var colDef = getColumnDefs();

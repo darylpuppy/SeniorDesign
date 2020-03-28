@@ -116,7 +116,7 @@ function numOfRows() {
 }
 
 function moveForward(){
-	if (this.selectedPivot < this.colData.pivotColumn.types.length){
+	if (this.selectedPivot < this.pivotColumn.types.length){
 		this.savePlan();
 		this.selectedPivot++;
 		updatePivotValue();
@@ -133,7 +133,7 @@ function moveBackward(){
 
 function updatePivotValue(){
 	gridOptions.api.setRowData(this.allData[this.selectedPivot].pageData);
-	$("#pivotValue").text(this.colData.pivotColumn.types[this.selectedPivot]);
+	$("#pivotValue").text(this.pivotColumn.types[this.selectedPivot]);
 }
 
 function addRow() {
@@ -277,21 +277,21 @@ function getColumnDefs() {
 // Populate the grid with data passed in via a JSON file
 function loadPlanData(file, isDataView) { //callback from downloadFile
 	this.allData = file;
-	this.allData = [{page: "Jan", pageData: [{id: 1, Count: 1, Wage: 1.5, Location: "Loc1", Type: "Con"}, {id: 2, Count: 2, Wage: 2.0, Location: "Loc2", Type: "Emp"}]},
-					{page: "Feb", pageData: [{id: 1, Count: 1, Wage: 3.2, Location: "Loc1", Type: "Con"}, {id: 2, Count: 1, Wage: 2.2, Location: "Loc1", Type: "Emp"}]},
-					{page: "Mar", pageData: [{id: 1, Count: 1, Wage: 0.6, Location: "Loc1", Type: "Con"}, {id: 2, Count: 2, Wage: 5.6, Location: "Loc2", Type: "Con"}, {id: 3, Count: 2, Wage: 3.7, Location: "Loc1", Type: "Emp"}]}, 
-					{page: "Apr", pageData: [{id: 1, Count: 1, Wage: 1.5, Location: "Loc1", Type: "Con"}, {id: 2, Count: 2, Wage: 1.5, Location: "Loc2", Type: "Emp"}, {id: 3, Count: 7, Wage: 1.5, Location: "Loc2", Type: "Emp"}]},
-					{page: "May", pageData: [{id: 1, Count: 1, Wage: 3.0, Location: "Loc1", Type: "Con"}, {id: 2, Count: 1, Wage: 0.7, Location: "Loc1", Type: "Emp"}, {id: 3, Count: 1, Wage: 0.0, Location: "Loc2", Type: "Con"}]}, ]
 	if (isDataView){
-		gridOptions.api.setRowData(JSON.parse(file));
+		gridOptions.api.setRowData(this.allData[0].pageData);
 	}
 	else{
+		/*this.allData = [{page: "Jan", pageData: [{id: 1, Count: 1, Wage: 1.5, Location: "Loc1", Type: "Con"}, {id: 2, Count: 2, Wage: 2.0, Location: "Loc2", Type: "Emp"}]},
+						{page: "Feb", pageData: [{id: 1, Count: 1, Wage: 3.2, Location: "Loc1", Type: "Con"}, {id: 2, Count: 1, Wage: 2.2, Location: "Loc1", Type: "Emp"}]},
+						{page: "Mar", pageData: [{id: 1, Count: 1, Wage: 0.6, Location: "Loc1", Type: "Con"}, {id: 2, Count: 2, Wage: 5.6, Location: "Loc2", Type: "Con"}, {id: 3, Count: 2, Wage: 3.7, Location: "Loc1", Type: "Emp"}]}, 
+						{page: "Apr", pageData: [{id: 1, Count: 1, Wage: 1.5, Location: "Loc1", Type: "Con"}, {id: 2, Count: 2, Wage: 1.5, Location: "Loc2", Type: "Emp"}, {id: 3, Count: 7, Wage: 1.5, Location: "Loc2", Type: "Emp"}]},
+						{page: "May", pageData: [{id: 1, Count: 1, Wage: 3.0, Location: "Loc1", Type: "Con"}, {id: 2, Count: 1, Wage: 0.7, Location: "Loc1", Type: "Emp"}, {id: 3, Count: 1, Wage: 0.0, Location: "Loc2", Type: "Con"}]}, ]*/
 		this.aggregationProperty = $(".aggregationProperty").val();
 		var summaryData = {};
 		for (pageData of this.allData){
 			summaryData[pageData.page] = 0;
 			for (rowData of pageData.pageData){
-				summaryData[pageData.page] += rowData[aggregationProperty];
+				summaryData[pageData.page] += rowData[aggregationProperty] ?? 0;
 			}
 		}
 		gridOptions.api.setRowData([summaryData]);
@@ -302,20 +302,13 @@ function loadPlanDef(file, isDataView) { //callback from downloadFile
 	this.columnDefs = file.columns;
 	this.pivotColumn = file.pivotColumn;
 	if (isDataView){
-		for(var column of this.columnDefs){
-			this.columnOptions.push({
-				editable: true,
-				resizable: true,
-				filter: false,
-				sortable: false,
-				headerName: column.name,
-				field: column.name,
-				colID: column.name
-			});
-		}
+		gridOptions.api.setColumnDefs(this.columnDefs);
+		$(tableHeader).text("Pivot Name " +  this.pivotColumn.name);
+		this.selectedPivot = 0;
+		$("#pivotValue").text(this.pivotColumn.types[this.selectedPivot]);
 	}
 	else{
-		this.pivotColumn = {name: "Date", types: ["Jan", "Feb", "Mar", "Apr", "May"]}
+		//this.pivotColumn = {name: "Date", types: ["Jan", "Feb", "Mar", "Apr", "May"]}
 		for(var column of this.pivotColumn.types){
 			this.baseColumnOptions.push({
 				editable: true,
@@ -350,9 +343,10 @@ function loadPlanDef(file, isDataView) { //callback from downloadFile
 				colID: column
 			});
 		}
-		this.columnDefs = [{name: "Location", type: 2, enums:[]}, {name: "Wage", type: 1, enums:[]}, {name: "Type", type: 3, enums: ["Emp", "Con"]}, {name: "Count", type: 0, enums: []}];
+		//this.columnDefs = [{name: "Location", type: 2, enums:[]}, {name: "Wage", type: 1, enums:[]}, {name: "Type", type: 3, enums: ["Emp", "Con"]}, {name: "Count", type: 0, enums: []}];
 		var $groupByDropdown = $(".groupBySelect");
 		var $aggregateDropdown = $(".aggregationProperty");
+		console.log(this.columnDefs);
 		if (this.columnDefs.some((column) => column.name == "Count")){
 				$aggregateDropdown.append($("<option />").val("Count").text("Count"));
 		}
@@ -361,14 +355,14 @@ function loadPlanDef(file, isDataView) { //callback from downloadFile
 				continue;
 			}
 			if (column.type == "2" || column.type == "3"){
-				$groupByDropdown.append($("<option />").val(column.name).text(column.name));
+				$groupByDropdown.append($("<option />").val(column.headerName).text(column.headerName));
 			}
 			else if (column.type == "0" || column.type == "1"){
-				$aggregateDropdown.append($("<option />").val(column.name).text(column.name));
+				$aggregateDropdown.append($("<option />").val(column.headerName).text(column.headerName));
 			}
 		}
+		gridOptions.api.setColumnDefs(this.baseColumnOptions);
 	}
-	gridOptions.api.setColumnDefs(this.baseColumnOptions);
 }
 
 function loadPlanProp(file) {
@@ -541,4 +535,14 @@ function getCurrentPlan() {
 
 function getPageSize() {
   return pageSize;
+}
+
+function switchViewType(){
+    localStorage.setItem("planToLoad", currentPlan);
+	if (window.location.href.endsWith("plan-view.html")){
+		location.href = './grid.html';
+	}
+	else{
+		location.href = './plan-view.html';
+	}
 }
