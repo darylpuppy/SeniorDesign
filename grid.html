@@ -30,7 +30,7 @@
           <button type="button" class="btn cancel" onclick="closeSaveAs()">Cancel</button>
         </div>
       </div>
-      <button id="loadPlan" onclick="location.href='view-plans.html';" class="pink ghost">Create/View Plans</button>
+      <button id="loadPlan" onclick="location.href='view-plans.html';" class="pink ghost">Back to Plan Views</button>
       <button onclick="addRow()" class="green ghost">Add Row</button>
       <button onclick="removeRow()" class="red ghost">Remove Row</button>
       <button id="toggleSuperuserControls" class="pink ghost">Edit Header</button>
@@ -50,7 +50,6 @@
         </div>
     </div>
     </div>
-
     <div id="superuserControls">
       <form id="selectHeader">
         <select id="headerList">
@@ -60,7 +59,12 @@
       <input id="newHeader" type="text" value="New Column Name">
       <button onclick="editHeaderName()"><b>Confirm</b></button>
     </div>
-
+	<p id="tableHeader" style="color: white">  </p>
+    <div>
+      <button type="button" onclick="moveBackward()" class="ghost">backward</button>
+      <button type="button" onclick="moveForward()" class="ghost">forward</button>
+    </div>
+	<p id="pivotValue" style="color: white;"></p>
     <div id="tableContainer">
       <div id="grid" class="ag-theme-balham-dark"></div>
     </div>

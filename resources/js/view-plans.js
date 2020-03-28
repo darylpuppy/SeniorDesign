@@ -27,7 +27,7 @@ var gridOptions = {
 var planToLoad = "";
 var planToDelete = "";
 var planNameToCreate = "";
-var columnDefinitions = [];
+var columnDefinitions = {pivotColumn: {}, columns: []};
 var rowDefinitions = [];
 var emptyRow = {};
 
@@ -96,12 +96,12 @@ emptyRow["Count"] = "";
 emptyRow["Location"] = "";
 emptyRow["Type"] = "";
 
-columnDefinitions.push(idDef);
-columnDefinitions.push(nameDef);
-columnDefinitions.push(leaderDef);
-columnDefinitions.push(locationDef);
-columnDefinitions.push(typeDef);
-columnDefinitions.push(countDef);
+columnDefinitions.columns.push(idDef);
+columnDefinitions.columns.push(nameDef);
+columnDefinitions.columns.push(leaderDef);
+columnDefinitions.columns.push(locationDef);
+columnDefinitions.columns.push(typeDef);
+columnDefinitions.columns.push(countDef);
 
 rowDefinitions.emptyRow = emptyRow;
 
@@ -182,16 +182,15 @@ $(".typeSelect").change(function(){
 })
 
 function createNewPlan() {
-	console.log("creating a new plan");
     if(sessionStorage.getItem("permission") === "S"){
       // getting all the plan data from the html form
       var columns = $("#columnForm > .colInfo");
-      var pageElements = document.getElementById("pagesForm").elements;
+	  var pivotValues = $(".pivotValue");
       planNameToCreate = document.getElementById("newPlanName").value;
+
       // creating a JSON object out of columnDefinitions, will have to tweak
       // after implementing pages
       for(var i = 0 ; i < columns.length; i++) {
-		console.log(columns[i]);
 	      var column = columns[i];
 		  var types = "";
 		  if ($(columns[i]).children(".typeSelect").first().val() === "enum"){
@@ -212,21 +211,23 @@ function createNewPlan() {
 				"type": $(column).find(".typeSelect").first().val(),
 				"enums": types
             };
-			console.log(columnInfo);
-            columnDefinitions.push(columnInfo);
+            columnDefinitions.columns.push(columnInfo);
             emptyRow[$(column).find(".typeSelect").first().val()] = "";
           }
       }
-      // Eliminate remove buttons and add page button from total element count
-      numOfPages = (pageElements.length/2)-1;
-      // Creates an empty row on each page
-      for(var i = 0 ; i < numOfPages; i++) {
-          rowDefinitions.push(emptyRow); // add an empty row to each page
-      }
-      rowDefinitions = JSON.stringify(rowDefinitions);
+
+      columnDefinitions.pivotColumn.name = document.getElementById("pivotName").value; // save the name of the pivote value
+	  columnDefinitions.pivotColumn.types = [];
+	  var allData = [];
+	  for (var pivotValue of pivotValues){
+	  	  columnDefinitions.pivotColumn.types.push($(pivotValue).val());
+		  allData.push({pageName: $(pivotValue).val(), pageData: [emptyRow]})
+	  }
+
+      allData = JSON.stringify(allData);
       columnDefinitions = JSON.stringify(columnDefinitions);
 
-      uploadNewPlan(rowDefinitions, columnDefinitions);
+      uploadNewPlan(allData, columnDefinitions);
     }
     else {
       alert("You do not have permission to create a plan");

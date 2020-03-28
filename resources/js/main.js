@@ -34,6 +34,7 @@ initGrid(gridOptions);
 function initGrid() {
   // Find the grid div element in index.html
   var eGridDiv = document.querySelector('#grid');
+  var tableHeader = document.querySelector('#tableHeader');
 
   // Create the grid passing in the div to use together with the columns & data we want to use
   new agGrid.Grid(eGridDiv, gridOptions);
@@ -112,6 +113,27 @@ function numOfRows() {
     rows = rows + 1;
   });
   return rows;
+}
+
+function moveForward(){
+	if (this.selectedPivot < this.colData.pivotColumn.types.length){
+		this.savePlan();
+		this.selectedPivot++;
+		updatePivotValue();
+	}
+}
+
+function moveBackward(){
+	if (this.selectedPivot >= 0){
+		this.savePlan();
+		this.selectedPivot--;
+		updatePivotValue();
+	}
+}
+
+function updatePivotValue(){
+	gridOptions.api.setRowData(this.allData[this.selectedPivot].pageData);
+	$("#pivotValue").text(this.colData.pivotColumn.types[this.selectedPivot]);
 }
 
 function addRow() {
