@@ -1,13 +1,11 @@
 
-var bucketName = "workforce-planning-tool-prototype";
-var bucketRegion = "us-east-2";
-var IdentityPoolId = "us-east-2:d7dc0ae9-baf2-4777-ad5c-cfc3ad132b90";
+var bucketName = "2020group11seniordesign";
+var bucketRegion = "us-west-2";
+var IdentityPoolId = "us-west-2:f9be604f-1168-4dbf-966c-28d18cce854f";
 
-AWS.config.update({
-  region: bucketRegion,
-  credentials: new AWS.CognitoIdentityCredentials({
-    IdentityPoolId: IdentityPoolId
-  })
+AWS.config.region = bucketRegion; // Region
+AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+    IdentityPoolId: IdentityPoolId,
 });
 
 var s3 = new AWS.S3({
