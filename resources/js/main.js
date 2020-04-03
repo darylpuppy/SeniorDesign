@@ -67,9 +67,6 @@ function cellValueChanged(event) {
   // Gets the name of the column that was edited and that row's index in the grid
   colEdited = event.column.colId;
   editIndex = event.node.childIndex;
-
-  console.log("Edit index: "+editIndex);
-
   // Propagate cell edits forward if enabled
   if(propagateForwardMode) {
     // For indexes *ahead* of the edited cell, propagate changes if the ID datavalues match
@@ -114,16 +111,16 @@ function numOfRows() {
 
 function moveForward(){
 	if (this.selectedPivot < this.colData.pivotColumn.types.length){
+    this.selectedPivot++;
 		this.savePlan();
-		this.selectedPivot++;
 		updatePivotValue();
 	}
 }
 
 function moveBackward(){
 	if (this.selectedPivot >= 0){
+    this.selectedPivot--;
 		this.savePlan();
-		this.selectedPivot--;
 		updatePivotValue();
 	}
 }
