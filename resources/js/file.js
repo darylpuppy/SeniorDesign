@@ -114,7 +114,7 @@ function savePlanButton() {
   // Converts the grid's data to a CSV, then to a JSON for export
   var rowData = exportCSV();
   rowData = JSON.parse(convertCSV(rowData));
-  var currentPage = this.allData.find((page) => page.pageName == this.colData.pivotColumn.types[this.selectedPivot]);	//All of these variables are in main.js
+  var currentPage = this.allData.find((page) => page.pageName == this.pivotColumn.types[this.selectedPivot]);	//All of these variables are in main.js
   currentPage.pageData = rowData;
 
   var colDef = getColumnDefs();

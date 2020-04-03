@@ -113,29 +113,18 @@ function numOfRows() {
 }
 
 function moveForward(){
-	if (this.selectedPivot < this.colData.pivotColumn.types.length){
-
-    this.selectedPivot++;
-    if(!(this.selectedPivot >= this.colData.pivotColumn.types.length)){
-      this.savePlan();
-      updatePivotValue();
+	if (this.selectedPivot < this.pivotColumn.types.length - 1){
+		this.selectedPivot++;
+		this.savePlan();
+		updatePivotValue();
     }
-    else 
-      this.selectedPivot--;
-	}
 }
 
 function moveBackward(){
-
-
-	if (this.selectedPivot >= 0){
-    this.selectedPivot--;
-    if(!(this.selectedPivot < 0)){
-      this.savePlan();
-      updatePivotValue();
-    }
-    else 
-    this.selectedPivot++;
+	if (this.selectedPivot > 0){
+		this.selectedPivot--;
+		this.savePlan();
+		updatePivotValue();
 	}
 }
 
