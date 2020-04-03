@@ -111,17 +111,29 @@ function numOfRows() {
 
 function moveForward(){
 	if (this.selectedPivot < this.colData.pivotColumn.types.length){
+
     this.selectedPivot++;
-		this.savePlan();
-		updatePivotValue();
+    if(!(this.selectedPivot >= this.colData.pivotColumn.types.length)){
+      this.savePlan();
+      updatePivotValue();
+    }
+    else 
+      this.selectedPivot--;
+
 	}
 }
 
 function moveBackward(){
+
+
 	if (this.selectedPivot >= 0){
     this.selectedPivot--;
-		this.savePlan();
-		updatePivotValue();
+    if(!(this.selectedPivot < 0)){
+      this.savePlan();
+      updatePivotValue();
+    }
+    else 
+    this.selectedPivot++;
 	}
 }
 
