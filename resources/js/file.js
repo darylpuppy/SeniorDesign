@@ -1,14 +1,12 @@
 
 // Specify credentials needed to put/get on S3 bucket
-var bucketName = "workforce-planning-tool-prototype";
-var bucketRegion = "us-east-2";
-var IdentityPoolId = "us-east-2:d7dc0ae9-baf2-4777-ad5c-cfc3ad132b90";
+var bucketName = "2020group11seniordesign";
+var bucketRegion = "us-west-2";
+var IdentityPoolId = "us-west-2:f9be604f-1168-4dbf-966c-28d18cce854f";
 
-AWS.config.update({
-  region: bucketRegion,
-  credentials: new AWS.CognitoIdentityCredentials({
-    IdentityPoolId: IdentityPoolId
-  })
+AWS.config.region = bucketRegion; // Region
+AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+    IdentityPoolId: IdentityPoolId,
 });
 
 var s3 = new AWS.S3({
@@ -66,23 +64,19 @@ function savePlan() {
     planName = getCurrentPlan();
   }
 
-  console.log("Saving plan with name "+planName);
-
   // Converts the grid's data to a CSV, then to a JSON for export
   var rowData = exportCSV();
-  rowData = convertCSV(rowData);
-  //console.log("Rowdata:");
-  //console.log(rowData);
+  rowData = JSON.parse(convertCSV(rowData));
+  var currentPage = this.allData.find((page) => page.pageName == this.colData.pivotColumn.types[this.selectedPivot]);	//All of these variables are in main.js
+  currentPage.pageData = rowData;
 
   var colDef = getColumnDefs();
   colDef = JSON.stringify(colDef, null, '\t');
-  //console.log("Coldefs:");
-  //console.log(colDef);
 
   // Create a new file with the name of the plan and row/column data
   // ROW DATA
   planDataName = planName + "Data.json";
-  var rowDataFile = new File([rowData], planDataName);
+  var rowDataFile = new File([JSON.stringify(this.allData)], planDataName);
   var rowDataFileName = rowDataFile.name;
 
   // COLUMN DEFS
@@ -102,7 +96,6 @@ function savePlan() {
 
   // Uploads row data and column defs to S3
   uploadFile(rowDataFile, rowDataFileKey);
-  uploadFile(colDefFile, colDefFileKey);
   uploadFile(propFile, propFileKey);
 
   // Closes save as modal if showing
