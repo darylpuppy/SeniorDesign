@@ -5,7 +5,7 @@ pageSize = 0; // default
 var gridOptions = {
   animateRows: true,
   rowSelection: 'multiple',
-  pagination: true,
+  pagination: false,
   enterMovesDownAfterEdit: false,
   stopEditingWhenGridLosesFocus: true,
 	paginationAutoPageSize: true,
@@ -288,12 +288,15 @@ function loadPlanData(file, isDataView) { //callback from downloadFile
 						{page: "May", pageData: [{id: 1, Count: 1, Wage: 3.0, Location: "Loc1", Type: "Con"}, {id: 2, Count: 1, Wage: 0.7, Location: "Loc1", Type: "Emp"}, {id: 3, Count: 1, Wage: 0.0, Location: "Loc2", Type: "Con"}]}, ]*/
 		this.aggregationProperty = $(".aggregationProperty").val();
 		var summaryData = {};
+		console.log(this.allData);
 		for (pageData of this.allData){
-			summaryData[pageData.page] = 0;
+			summaryData[pageData.pageName] = 0;
 			for (rowData of pageData.pageData){
-				summaryData[pageData.page] += rowData[aggregationProperty] ?? 0;
+				summaryData[pageData.pageName] += Number(rowData[aggregationProperty] ?? 0);
 			}
+			console.log(summaryData);
 		}
+		console.log(summaryData);
 		gridOptions.api.setRowData([summaryData]);
 	}
 }
@@ -347,11 +350,11 @@ function loadPlanDef(file, isDataView) { //callback from downloadFile
 		var $groupByDropdown = $(".groupBySelect");
 		var $aggregateDropdown = $(".aggregationProperty");
 		console.log(this.columnDefs);
-		if (this.columnDefs.some((column) => column.name == "Count")){
+		if (this.columnDefs.some((column) => column.field == "Count")){
 				$aggregateDropdown.append($("<option />").val("Count").text("Count"));
 		}
 		for (var column of this.columnDefs){
-			if (column.name == "Count"){
+			if (column.field == "Count"){
 				continue;
 			}
 			if (column.type == "2" || column.type == "3"){
@@ -414,20 +417,20 @@ function groupArray(groupProps, allData, pivotColumn){
 			for (var row of pageData.pageData){
 				var correspondingSummary = summaryData.find(summary => {
 					for (var column of groupProps){
-						if (summary[column] != row[column]){
+						if ((!!summary[column] && summary[column] != row[column]) && row[column] != "Undefined"){
 							return false;
 						}
 					}
 					return true;
-				})
+				});
 				if (!correspondingSummary){
 					correspondingSummary = {};
 					for (var column of groupProps){
-						correspondingSummary[column] = row[column];
+						correspondingSummary[column] = row[column] ?? "Undefined";
 					}
 					summaryData.push(correspondingSummary);
 				}
-				correspondingSummary[pageData.page] = row[this.aggregationProperty] + (correspondingSummary[pageData.page] ?? 0);
+				correspondingSummary[pageData.pageName] = Number(row[this.aggregationProperty]) + (correspondingSummary[pageData.pageName] ?? 0);
 			}
 		}
 		for (var column of this.pivotColumn.types){
@@ -442,9 +445,9 @@ function groupArray(groupProps, allData, pivotColumn){
 	else{
 		var summaryData = {};
 		for (pageData of this.allData){
-			summaryData[pageData.page] = 0;
+			summaryData[pageData.pageName] = 0;
 			for (rowData of pageData.pageData){
-				summaryData[pageData.page] += rowData[aggregationProperty];
+				summaryData[pageData.pageName] += Number(rowData[aggregationProperty]);
 			}
 		}
 		return [summaryData];
