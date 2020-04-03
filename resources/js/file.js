@@ -100,6 +100,54 @@ function savePlan() {
 
   // Closes save as modal if showing
   closeSaveAs();
+
+}
+
+function savePlanButton() {
+  var planName = document.getElementById("planName").value
+
+  // Specified if user selects 'save as', otherwise save with current name
+  if(planName == "") {
+    planName = getCurrentPlan();
+  }
+
+  // Converts the grid's data to a CSV, then to a JSON for export
+  var rowData = exportCSV();
+  rowData = JSON.parse(convertCSV(rowData));
+  var currentPage = this.allData.find((page) => page.pageName == this.colData.pivotColumn.types[this.selectedPivot]);	//All of these variables are in main.js
+  currentPage.pageData = rowData;
+
+  var colDef = getColumnDefs();
+  colDef = JSON.stringify(colDef, null, '\t');
+
+  // Create a new file with the name of the plan and row/column data
+  // ROW DATA
+  planDataName = planName + "Data.json";
+  var rowDataFile = new File([JSON.stringify(this.allData)], planDataName);
+  var rowDataFileName = rowDataFile.name;
+
+  // COLUMN DEFS
+  colDefName = planName + "Def.json";
+  var colDefFile = new File([colDef], colDefName);
+  var colDefFileName = colDefFile.name;
+
+  // PROPERTIES FILE
+  var propFileName = "properties.json";
+  var properties = {pageSize: getPageSize()};
+  var propFile = new File([JSON.stringify(properties)], propFileName);
+
+  var folderKey = "plans/" + encodeURIComponent(planName) + "/"; //specifies plan folder to upload to
+  var rowDataFileKey = folderKey + rowDataFileName;
+  var colDefFileKey = folderKey + colDefFileName;
+  var propFileKey = folderKey + propFileName;
+
+  // Uploads row data and column defs to S3
+  uploadFile(rowDataFile, rowDataFileKey);
+  uploadFile(propFile, propFileKey);
+
+  // Closes save as modal if showing
+  closeSaveAs();
+  alert("Plan Saved");
 }
 
 function openSaveAs() {
