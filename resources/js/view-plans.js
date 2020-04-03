@@ -41,67 +41,10 @@ var idDef = {
   "field": "ID",
   "colID": "ID"
 };
-var countDef = {
-  "editable": true,
-  "resizable": true,
-  "filter": false,
-  "sortable": false,
-  "headerName": "Count",
-  "field": "Count",
-  "colID": "Count"
-};
-
-var leaderDef = {
-  "editable": true,
-  "resizable": true,
-  "filter": false,
-  "sortable": false,
-  "headerName": "Leader",
-  "field": "Leader",
-  "colID": "Leader"
-};
-
-var nameDef = {
-  "editable": true,
-  "resizable": true,
-  "filter": false,
-  "sortable": false,
-  "headerName": "Name",
-  "field": "Name",
-  "colID": "Name"
-};
-
-// delete these two maybe
-var typeDef = {
-  "editable": true,
-  "resizable": true,
-  "filter": false,
-  "sortable": false,
-  "headerName": "Type",
-  "field": "Type",
-  "colID": "Type"
-};
-var locationDef = {
-  "editable": true,
-  "resizable": true,
-  "filter": false,
-  "sortable": false,
-  "headerName": "Location",
-  "field": "Location",
-  "colID": "Location"
-}
 
 emptyRow["ID"] = randRange(10000000, 99999999);
-emptyRow["Count"] = "";
-emptyRow["Location"] = "";
-emptyRow["Type"] = "";
 
 columnDefinitions.columns.push(idDef);
-columnDefinitions.columns.push(nameDef);
-columnDefinitions.columns.push(leaderDef);
-columnDefinitions.columns.push(locationDef);
-columnDefinitions.columns.push(typeDef);
-columnDefinitions.columns.push(countDef);
 
 rowDefinitions.emptyRow = emptyRow;
 
@@ -208,7 +151,7 @@ function createNewPlan() {
 				"headerName": $(column).find(".colName").first().val(),
 				"field": $(column).find(".colName").first().val(),
 				"colID": $(column).find(".colName").first().val(),
-				"type": $(column).find(".typeSelect").first().val(),
+				"type": $(column).find(".typeSelect").first().find(":selected").index(),
 				"enums": types
             };
             columnDefinitions.columns.push(columnInfo);

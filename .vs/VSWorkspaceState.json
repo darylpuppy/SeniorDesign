@@ -2,9 +2,8 @@
   "ExpandedNodes": [
     "",
     "\\resources",
-    "\\resources\\css",
     "\\resources\\js"
   ],
-  "SelectedNode": "\\resources\\css\\view-plans.css",
+  "SelectedNode": "\\resources\\js\\view-plans.js",
   "PreviewInSolutionExplorer": false
 }

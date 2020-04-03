@@ -8,7 +8,7 @@ var gridOptions = {
   pagination: false,
   enterMovesDownAfterEdit: false,
   stopEditingWhenGridLosesFocus: true,
-  paginationPageSize: pageSize,
+	paginationAutoPageSize: true,
   onGridReady: gridReady,
   onCellValueChanged: cellValueChanged,
 
@@ -26,6 +26,8 @@ var gridOptions = {
   }]
 };
 
+var allData, pivotColumn, columnDefs, baseColumnOptions = [], aggregationProperty, initialValues, groupProps;
+
 initGrid(gridOptions);
 
 // Initialize the grid with column definitions and row data
@@ -39,7 +41,8 @@ function initGrid() {
 
 
   // Download the chosen plan's data and load into grid
-  loadPlan(localStorage.getItem('planToLoad'));
+  var location = window.location.href;
+  loadPlan(localStorage.getItem('planToLoad'), location.endsWith("grid.html"));
   localStorage.clear();
 }
 
@@ -52,7 +55,6 @@ function loadPlanNames(plans){
 
 // Executes after data is finished being loaded into grid
 function gridReady() {
-  console.log("Data successfully loaded into grid");
   gridOptions.columnApi.autoSizeColumns();
   updatePlanList();
 }
@@ -67,6 +69,7 @@ function cellValueChanged(event) {
   // Gets the name of the column that was edited and that row's index in the grid
   colEdited = event.column.colId;
   editIndex = event.node.childIndex;
+  
   // Propagate cell edits forward if enabled
   if(propagateForwardMode) {
     // For indexes *ahead* of the edited cell, propagate changes if the ID datavalues match
@@ -110,36 +113,24 @@ function numOfRows() {
 }
 
 function moveForward(){
-	if (this.selectedPivot < this.colData.pivotColumn.types.length){
-
-    this.selectedPivot++;
-    if(!(this.selectedPivot >= this.colData.pivotColumn.types.length)){
-      this.savePlan();
-      updatePivotValue();
+	if (this.selectedPivot < this.pivotColumn.types.length - 1){
+		this.selectedPivot++;
+		this.savePlan();
+		updatePivotValue();
     }
-    else 
-      this.selectedPivot--;
-
-	}
 }
 
 function moveBackward(){
-
-
-	if (this.selectedPivot >= 0){
-    this.selectedPivot--;
-    if(!(this.selectedPivot < 0)){
-      this.savePlan();
-      updatePivotValue();
-    }
-    else 
-    this.selectedPivot++;
+	if (this.selectedPivot > 0){
+		this.selectedPivot--;
+		this.savePlan();
+		updatePivotValue();
 	}
 }
 
 function updatePivotValue(){
 	gridOptions.api.setRowData(this.allData[this.selectedPivot].pageData);
-	$("#pivotValue").text(this.colData.pivotColumn.types[this.selectedPivot]);
+	$("#pivotValue").text(this.pivotColumn.types[this.selectedPivot]);
 }
 
 function addRow() {
@@ -177,7 +168,6 @@ function getRowAtIndex(targetIndex, callback) {
 function removeRowAtIndex(targetIndex) {
   gridOptions.api.forEachNode( function(rowNode, index) {
     if(rowNode.index == targetIndex) {
-        console.log("Removing row "+index);
         gridOptions.api.updateRowData({remove: [rowNode.data]});
         
     }
@@ -199,11 +189,8 @@ function removeRow(selectedRow) {
     row = selectedRow[0]; // Since row selection is set to singlular, we only want the first
   })                      // element in the list of selected rows
   
-  //console.log(selectedRow)
   // Get the index for the selected row
   var index = row.childIndex;
-  
-  console.log("Row is at index: "+index);
 
   // Find the "relative" row location for each page and remove rows
   // from page 1 onward
@@ -214,8 +201,6 @@ function removeRow(selectedRow) {
   // Calculate number of *full* pages in the plan
   numOfPages = Math.floor((numOfRows()) / pageSize);
 
-
-  //console.log("row Data: " + selectedRow.data)
   removeRowAtIndex(index);
   // Decrement the number of rows to show per page and update grid
 
@@ -250,8 +235,6 @@ function editHeaderName() {
   // Reloads data from old header name into new header name and refreshes cells
   gridOptions.api.forEachNode(function(rowNode, index) {
     rowNode.data[newName] = savedData[index];
-    console.log("For node" + index);
-    console.log(rowNode.data[newName]);
   });
 
   gridOptions.api.refreshCells();
@@ -269,32 +252,109 @@ function getColumnDefs() {
   columns.forEach(function(col) {
     colDefs.push(col.colDef);
   });
-  //console.log(colDefs);
   return colDefs;
 }
 
 // Populate the grid with data passed in via a JSON file
-function loadPlanData(file) { //callback from downloadFile
-	this.allData = JSON.parse(file);
-  gridOptions.api.setRowData(this.allData[0].pageData);
+function loadPlanData(file, isDataView) { //callback from downloadFile
+	this.allData = file;
+	if (isDataView){
+		gridOptions.api.setRowData(this.allData[0].pageData);
+	}
+	else{
+		this.aggregationProperty = $(".aggregationProperty").val();
+		var summaryData = {};
+		for (pageData of this.allData){
+			summaryData[pageData.pageName] = 0;
+			for (rowData of pageData.pageData){
+				summaryData[pageData.pageName] += Number(rowData[aggregationProperty] ?? 0);
+			}
+		}
+		gridOptions.api.setRowData([summaryData]);
+	}
 }
 
-function loadPlanDef(file) { //callback from downloadFile
-	this.colData = JSON.parse(file);
-  gridOptions.api.setColumnDefs(this.colData.columns);
-  $(tableHeader).text("Pivot Name " +  this.colData.pivotColumn.name);
-  this.selectedPivot = 0;
-  $("#pivotValue").text(this.colData.pivotColumn.types[this.selectedPivot]);
+function loadPlanDef(file, isDataView) { //callback from downloadFile
+	this.columnDefs = file.columns;
+	this.pivotColumn = file.pivotColumn;
+	if (isDataView){
+		gridOptions.api.setColumnDefs(this.columnDefs);
+		$(tableHeader).text("Pivot Name " +  this.pivotColumn.name);
+		this.selectedPivot = 0;
+		$("#pivotValue").text(this.pivotColumn.types[this.selectedPivot]);
+	}
+	else{
+		for(var column of this.pivotColumn.types){
+			this.baseColumnOptions.push({
+				editable: true,
+				resizable: true,
+				filter: false,
+				sortable: false,
+				headerName: column,
+				field: column,
+				/*valueGetter:function(params){
+					return params.data[column];
+				},
+				valueSetter: function(params){
+					var existingModifiation = this.modifications.find((modification) => {
+						for (var groupProp of this.groupProps){
+							if (params.data[groupProp] != modification[groupProp]){
+								return false;
+							}
+						}
+						return true;
+					});
+
+					if (!existingModification){
+						existingModifiation = {};
+						for (var groupProp of this.groupProps){
+							existingModification[groupProp] = params.data[groupProp];
+						}
+						this.modifications.push(existingModification);
+					}
+
+					existingModifiation[this.aggregationProperty] = (existingModifiation[this.aggregationProperty] ?? 0) +  params.newValue - params.oldValue;
+				}*/
+				colID: column
+			});
+		}
+		var $groupByDropdown = $(".groupBySelect");
+		var $aggregateDropdown = $(".aggregationProperty");
+		if (this.columnDefs.some((column) => column.field == "Count")){
+				$aggregateDropdown.append($("<option />").val("Count").text("Count"));
+		}
+		for (var column of this.columnDefs){
+			if (column.field == "Count"){
+				continue;
+			}
+			if (column.type == "2" || column.type == "3"){
+				$groupByDropdown.append($("<option />").val(column.headerName).text(column.headerName));
+			}
+			else if (column.type == "0" || column.type == "1"){
+				$aggregateDropdown.append($("<option />").val(column.headerName).text(column.headerName));
+			}
+		}
+		gridOptions.api.setColumnDefs(this.baseColumnOptions);
+	}
 }
 
 function loadPlanProp(file) {
-  props = JSON.parse(file);
-  pageSize = props.pageSize;
+  pageSize = 1;
   gridOptions.api.paginationSetPageSize(Number(pageSize));
 }
 
 function randRange(min, max) {
   return Math.floor(Math.random() * (max - min) ) + min;
+}
+
+function saveChanges(){
+	var currentValues = gridOptions.api.getModel().rowsToDisplay.map(row => row.data);
+	var modifications = [];
+	for (var i = 0;i < currentValues.length;i++){
+		currentRow = currentValues[i];
+		initialRow = initialValues[i];
+
+	}
 }
 
 // Grid toggle button
@@ -319,6 +379,84 @@ $('#toggleSuperuserControls').click(function() {
     }
   });
 });
+
+function groupArray(groupProps, allData, pivotColumn){
+	summaryData = [];
+	if (groupProps.length > 0){
+		for (var pageData of this.allData){
+			for (var row of pageData.pageData){
+				var correspondingSummary = summaryData.find(summary => {
+					for (var column of groupProps){
+						if ((!!summary[column] && summary[column] != row[column]) && row[column] != "Undefined"){
+							return false;
+						}
+					}
+					return true;
+				});
+				if (!correspondingSummary){
+					correspondingSummary = {};
+					for (var column of groupProps){
+						correspondingSummary[column] = row[column] ?? "Undefined";
+					}
+					summaryData.push(correspondingSummary);
+				}
+				correspondingSummary[pageData.pageName] = Number(row[this.aggregationProperty]) + (correspondingSummary[pageData.pageName] ?? 0);
+			}
+		}
+		for (var column of this.pivotColumn.types){
+			for (var row of summaryData){
+				if (!row[column]){
+					row[column] = 0;
+				}
+			}
+		}
+		return summaryData;
+	}
+	else{
+		var summaryData = {};
+		for (pageData of this.allData){
+			summaryData[pageData.pageName] = 0;
+			for (rowData of pageData.pageData){
+				summaryData[pageData.pageName] += Number(rowData[aggregationProperty]);
+			}
+		}
+		return [summaryData];
+	}
+}
+
+function groupData(){
+	this.groupProps = $('.groupBySelect').map(function(idx, elem) {
+		return $(elem).val();
+	  }).get();
+
+	if (this.groupProps[this.groupProps.length - 1] != "None"){
+		var lastElement = $(".groupBySelect").last();
+		var parent = $(lastElement).parent();
+		$(lastElement).clone(true).insertAfter($(lastElement));
+	}
+	this.groupProps = this.groupProps.filter(group => group != "None");
+
+	var columnOptions = this.groupProps.map((column) => {return {
+		editable: false,
+		resizable: true,
+		filter: false,
+		sortable: false,
+		headerName: column,
+		field: column,
+		colID: column
+	}}).concat(this.baseColumnOptions);
+	gridOptions.api.setColumnDefs([])
+	gridOptions.api.setColumnDefs(columnOptions);
+
+	var summaryData = this.groupArray(this.groupProps, this.allData, this.pivotColumn.types);
+	this.initialValues = JSON.parse(JSON.stringify(summaryData));
+	gridOptions.api.setRowData(summaryData);
+}
+
+function aggregateData(){
+	aggregationProperty = $('.aggregationProperty').val();
+	this.groupData();
+}
 
 function updatePlanList() {
   // Loads list of plans to load from
@@ -370,4 +508,14 @@ function getCurrentPlan() {
 
 function getPageSize() {
   return pageSize;
+}
+
+function switchViewType(){
+    localStorage.setItem("planToLoad", currentPlan);
+	if (window.location.href.endsWith("plan-view.html")){
+		location.href = './grid.html';
+	}
+	else{
+		location.href = './plan-view.html';
+	}
 }

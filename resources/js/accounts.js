@@ -7,7 +7,6 @@ AWS.config.region = bucketRegion; // Region
 AWS.config.credentials = new AWS.CognitoIdentityCredentials({
     IdentityPoolId: IdentityPoolId,
 });
-
 var s3 = new AWS.S3({
   apiVersion: "2006-03-01",
   params: { Bucket: bucketName }
@@ -104,6 +103,7 @@ function checkCredentials(){
   }, function (err, data){
       if(err){
         alert("Error retrieving users file: ", err.message);
+		console.log(err);
         return false;
       }
       else {

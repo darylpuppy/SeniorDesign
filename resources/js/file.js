@@ -28,22 +28,22 @@ function convertCSV(csv) {
   return JSON.stringify(csv, null, '\t');
 }
 
-function downloadPlanData(planName, callback) {
+function downloadPlanData(planName, callback, isDataView) {
   var fileName = planName + "Data.json";
   var folderName = planName;
   var folderKey = "plans/" + encodeURIComponent(folderName) + "/"; //specifies folder
   var fileKey = folderKey + fileName;
 
-  downloadFile(fileName, fileKey, callback)
+  downloadFile(fileName, fileKey, callback, isDataView)
 }
 
-function downloadPlanDef(planName, callback) {
+function downloadPlanDef(planName, callback, isDataView) {
   var fileName = planName + "Def.json";
   var folderName = planName;
   var folderKey = "plans/" + encodeURIComponent(folderName) + "/"; //specifies folder
   var fileKey = folderKey + fileName;
 
-  downloadFile(fileName, fileKey, callback);
+  downloadFile(fileName, fileKey, callback, isDataView);
 }
 
 function downloadPlanProp(planName, callback) {
@@ -67,7 +67,7 @@ function savePlan() {
   // Converts the grid's data to a CSV, then to a JSON for export
   var rowData = exportCSV();
   rowData = JSON.parse(convertCSV(rowData));
-  var currentPage = this.allData.find((page) => page.pageName == this.colData.pivotColumn.types[this.selectedPivot]);	//All of these variables are in main.js
+  var currentPage = this.allData.find((page) => page.pageName == this.pivotColumn.types[this.selectedPivot]);	//All of these variables are in main.js
   currentPage.pageData = rowData;
 
   var colDef = getColumnDefs();
@@ -114,7 +114,7 @@ function savePlanButton() {
   // Converts the grid's data to a CSV, then to a JSON for export
   var rowData = exportCSV();
   rowData = JSON.parse(convertCSV(rowData));
-  var currentPage = this.allData.find((page) => page.pageName == this.colData.pivotColumn.types[this.selectedPivot]);	//All of these variables are in main.js
+  var currentPage = this.allData.find((page) => page.pageName == this.pivotColumn.types[this.selectedPivot]);	//All of these variables are in main.js
   currentPage.pageData = rowData;
 
   var colDef = getColumnDefs();
@@ -166,11 +166,11 @@ function closeSaveAs() {
 }
 
 // Load a plan of specified name
-function loadPlan(planName) {
+function loadPlan(planName, isDataView) {
   setCurrentPlan(planName);
-  downloadPlanData(planName, loadPlanData); //in file.js, loadPlanData() is callback
-  downloadPlanDef(planName, loadPlanDef);
-  downloadPlanProp(planName, loadPlanProp);
+  downloadPlanData(planName, loadPlanData, isDataView); //in file.js, loadPlanData() is callback
+  downloadPlanDef(planName, loadPlanDef, isDataView);
+  downloadPlanProp(planName, loadPlanProp, isDataView);
 }
 
 // Load a plan from the selected plan in list
@@ -204,7 +204,7 @@ function uploadFile(file, fileKey, folderName) {
   );
 }
 
-function downloadFile(fileName, fileKey, callback) {
+function downloadFile(fileName, fileKey, callback, isDataView) {
   file = s3.getObject({
     Bucket: bucketName,
     Key: fileKey
@@ -215,9 +215,7 @@ function downloadFile(fileName, fileKey, callback) {
       } else {
         console.log("File retrieved");
         data = data.Body.toString();
-        //console.log("downloaded data:");
-        //console.log(data);
-        callback(data);
+        callback(JSON.parse(data), isDataView);
       }
   })
 }
