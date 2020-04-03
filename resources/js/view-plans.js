@@ -3,7 +3,7 @@
 var gridOptions = {
   animateRows: true,
   rowSelection: 'single',
-  pagination: true,
+  pagination: false,
   paginationPageSize: 50,
 
   // defines default column properties that are inherited
@@ -159,6 +159,7 @@ function createNewPlan() {
           }
       }
 
+
       columnDefinitions.pivotColumn.name = document.getElementById("pivotName").value; // save the name of the pivote value
 	  columnDefinitions.pivotColumn.types = [];
 	  var allData = [];
@@ -166,7 +167,6 @@ function createNewPlan() {
 	  	  columnDefinitions.pivotColumn.types.push($(pivotValue).val());
 		  allData.push({pageName: $(pivotValue).val(), pageData: [emptyRow]})
 	  }
-
       allData = JSON.stringify(allData);
       columnDefinitions = JSON.stringify(columnDefinitions);
 
