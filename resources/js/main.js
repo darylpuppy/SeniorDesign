@@ -55,7 +55,6 @@ function loadPlanNames(plans){
 
 // Executes after data is finished being loaded into grid
 function gridReady() {
-  console.log("Data successfully loaded into grid");
   gridOptions.columnApi.autoSizeColumns();
   updatePlanList();
 }
@@ -70,8 +69,6 @@ function cellValueChanged(event) {
   // Gets the name of the column that was edited and that row's index in the grid
   colEdited = event.column.colId;
   editIndex = event.node.childIndex;
-
-  console.log("Edit index: "+editIndex);
 
   // Propagate cell edits forward if enabled
   if(propagateForwardMode) {
@@ -175,7 +172,6 @@ function getRowAtIndex(targetIndex, callback) {
 function removeRowAtIndex(targetIndex) {
   gridOptions.api.forEachNode( function(rowNode, index) {
     if(rowNode.index == targetIndex) {
-        console.log("Removing row "+index);
         gridOptions.api.updateRowData({remove: [rowNode.data]});
     }
   });
@@ -196,11 +192,8 @@ function removeRow(selectedRow) {
     row = selectedRow[0]; // Since row selection is set to singlular, we only want the first
   })                      // element in the list of selected rows
   
-  //console.log(selectedRow)
   // Get the index for the selected row
   var index = row.childIndex;
-  
-  console.log("Row is at index: "+index);
 
   // Find the "relative" row location for each page and remove rows
   // from page 1 onward
@@ -212,12 +205,8 @@ function removeRow(selectedRow) {
 
 
   for(i = 1; i <= numOfPages; i++) {
-    console.log("deleting rows " + index)
-    console.log("deleting rowID " + selectedRow)
-    //console.log("row Data: " + selectedRow.data)
     removeRowAtIndex(index);
     index = (index + pageSize + i);
-    
   }
 
   // Decrement the number of rows to show per page and update grid
@@ -251,8 +240,6 @@ function editHeaderName() {
   // Reloads data from old header name into new header name and refreshes cells
   gridOptions.api.forEachNode(function(rowNode, index) {
     rowNode.data[newName] = savedData[index];
-    console.log("For node" + index);
-    console.log(rowNode.data[newName]);
   });
 
   gridOptions.api.refreshCells();
@@ -270,7 +257,6 @@ function getColumnDefs() {
   columns.forEach(function(col) {
     colDefs.push(col.colDef);
   });
-  //console.log(colDefs);
   return colDefs;
 }
 
@@ -281,22 +267,14 @@ function loadPlanData(file, isDataView) { //callback from downloadFile
 		gridOptions.api.setRowData(this.allData[0].pageData);
 	}
 	else{
-		/*this.allData = [{page: "Jan", pageData: [{id: 1, Count: 1, Wage: 1.5, Location: "Loc1", Type: "Con"}, {id: 2, Count: 2, Wage: 2.0, Location: "Loc2", Type: "Emp"}]},
-						{page: "Feb", pageData: [{id: 1, Count: 1, Wage: 3.2, Location: "Loc1", Type: "Con"}, {id: 2, Count: 1, Wage: 2.2, Location: "Loc1", Type: "Emp"}]},
-						{page: "Mar", pageData: [{id: 1, Count: 1, Wage: 0.6, Location: "Loc1", Type: "Con"}, {id: 2, Count: 2, Wage: 5.6, Location: "Loc2", Type: "Con"}, {id: 3, Count: 2, Wage: 3.7, Location: "Loc1", Type: "Emp"}]}, 
-						{page: "Apr", pageData: [{id: 1, Count: 1, Wage: 1.5, Location: "Loc1", Type: "Con"}, {id: 2, Count: 2, Wage: 1.5, Location: "Loc2", Type: "Emp"}, {id: 3, Count: 7, Wage: 1.5, Location: "Loc2", Type: "Emp"}]},
-						{page: "May", pageData: [{id: 1, Count: 1, Wage: 3.0, Location: "Loc1", Type: "Con"}, {id: 2, Count: 1, Wage: 0.7, Location: "Loc1", Type: "Emp"}, {id: 3, Count: 1, Wage: 0.0, Location: "Loc2", Type: "Con"}]}, ]*/
 		this.aggregationProperty = $(".aggregationProperty").val();
 		var summaryData = {};
-		console.log(this.allData);
 		for (pageData of this.allData){
 			summaryData[pageData.pageName] = 0;
 			for (rowData of pageData.pageData){
 				summaryData[pageData.pageName] += Number(rowData[aggregationProperty] ?? 0);
 			}
-			console.log(summaryData);
 		}
-		console.log(summaryData);
 		gridOptions.api.setRowData([summaryData]);
 	}
 }
@@ -311,7 +289,6 @@ function loadPlanDef(file, isDataView) { //callback from downloadFile
 		$("#pivotValue").text(this.pivotColumn.types[this.selectedPivot]);
 	}
 	else{
-		//this.pivotColumn = {name: "Date", types: ["Jan", "Feb", "Mar", "Apr", "May"]}
 		for(var column of this.pivotColumn.types){
 			this.baseColumnOptions.push({
 				editable: true,
@@ -346,10 +323,8 @@ function loadPlanDef(file, isDataView) { //callback from downloadFile
 				colID: column
 			});
 		}
-		//this.columnDefs = [{name: "Location", type: 2, enums:[]}, {name: "Wage", type: 1, enums:[]}, {name: "Type", type: 3, enums: ["Emp", "Con"]}, {name: "Count", type: 0, enums: []}];
 		var $groupByDropdown = $(".groupBySelect");
 		var $aggregateDropdown = $(".aggregationProperty");
-		console.log(this.columnDefs);
 		if (this.columnDefs.some((column) => column.field == "Count")){
 				$aggregateDropdown.append($("<option />").val("Count").text("Count"));
 		}
