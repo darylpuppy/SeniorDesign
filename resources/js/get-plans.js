@@ -51,13 +51,35 @@ function uploadNewPlan(rowData, colDef) {
   var planNameToCreate = getPlanNameToCreate();
   var folderKey = "plans/" + encodeURIComponent(planNameToCreate) + "/";
 
-  s3.headObject({ Key: folderKey }, function(err, data) {
+  /*s3.headObject({ Key: folderKey }, function(err, data) {
     if (!err) {
-      return alert("Plan already exists.");
+      return alert("empty plan name");
     }
     if (err.code !== "NotFound") {
       return alert("There was an error creating your plan: " + err.message);
     }
+    s3.putObject({ Key: folderKey }, function(err, data) {
+      if (err) {
+        return alert("There was an error creating your plan: " + err.message);
+      }
+      alert("Successfully created plan.");
+      var newPlanRow = '[{"planName": "' + planNameToCreate + '"}]';
+      gridOptions.api.updateRowData({add: JSON.parse(newPlanRow)});
+	  uploadPlanData(rowData, colDef, folderKey);
+    });
+  });
+  */
+
+
+
+  s3.headObject({ Key: folderKey }, function(err, data) {
+    if (planNameToCreate == "") {
+      return alert("empty plan name");
+    }
+    if (document.getElementById("pivotName").value == "") {
+      return alert("Empty piviot Name " );
+    }
+
     s3.putObject({ Key: folderKey }, function(err, data) {
       if (err) {
         return alert("There was an error creating your plan: " + err.message);

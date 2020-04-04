@@ -27,7 +27,7 @@ var gridOptions = {
 var planToLoad = "";
 var planToDelete = "";
 var planNameToCreate = "";
-var columnDefinitions = {pivotColumn: {}, columns: []};
+var columnDefinitions = {pivotColumn: {name = ""}, columns: []};
 var rowDefinitions = [];
 var emptyRow = {};
 
@@ -54,7 +54,8 @@ initGrid(gridOptions);
 function initGrid() {
   // Find the grid div element in index.html
   var eGridDiv = document.querySelector('#grid');
-
+  // unable double click on row Name of plan 
+  gridOptions.suppressClickEdit=true;
   // Create the grid passing in the div to use together with the columns & data we want to use
   new agGrid.Grid(eGridDiv, gridOptions);
 
@@ -63,6 +64,7 @@ function initGrid() {
 }
 
 // create handler function
+
 function cellClicked(event) {
     planToLoad = event.value;
     planToDelete = event.value;
@@ -91,6 +93,9 @@ $(".addFirstSibling").click(function() {
 });
 
 $(".removeParent").click(function() {
+  console.log($(this).parent().siblings().length)
+  // check siblings'lengnth won't allow further deleted 
+    if($(this).parent().siblings().length >1)
     $(this).parent().remove();
 });
 
@@ -154,14 +159,15 @@ function createNewPlan() {
 				"type": $(column).find(".typeSelect").first().find(":selected").index(),
 				"enums": types
             };
-            columnDefinitions.columns.push(columnInfo);
+            columnDefinitions.columns.push(columnInfo); 
             emptyRow[$(column).find(".typeSelect").first().val()] = "";
           }
       }
 
-
+      console.log(document.getElementById("pivotName").value)
       columnDefinitions.pivotColumn.name = document.getElementById("pivotName").value; // save the name of the pivote value
-	  columnDefinitions.pivotColumn.types = [];
+      
+	    columnDefinitions.pivotColumn.types = [];
 	  var allData = [];
 	  for (var pivotValue of pivotValues){
 	  	  columnDefinitions.pivotColumn.types.push($(pivotValue).val());
