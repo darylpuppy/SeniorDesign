@@ -65,14 +65,7 @@ function savePlan() {
 	planName = getCurrentPlan();
 	}
 
-	if (window.location.href.endsWith("grid.html")){
-		// Converts the grid's data to a CSV, then to a JSON for export
-		var rowData = exportCSV();
-		rowData = JSON.parse(convertCSV(rowData));
-		var currentPage = this.allData.find((page) => page.pageName == this.pivotColumn.types[this.selectedPivot]);	//All of these variables are in main.js
-		currentPage.pageData = rowData;
-	}
-	else{
+	if (!window.location.href.endsWith("grid.html")){
 		finalValues = JSON.parse(convertCSV(exportCSV()));
 		for (var i = 0;i < this.finalValues.length;i++){
 			var finalRow = this.finalValues[i];
