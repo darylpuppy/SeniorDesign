@@ -40,6 +40,7 @@ var idDef = {
   "headerName": "ID",
   "field": "ID",
   "colID": "ID"
+  
 };
 
 var defaultNameCol = {
@@ -50,7 +51,8 @@ var defaultNameCol = {
   "headerName": "Name",
   "field": "Name",
   "colID": "Name",
-  "type": Text,
+  "type": 2,
+  "enums": 'Text'
 };
 
 var defaultLeaderCol = {
@@ -61,7 +63,8 @@ var defaultLeaderCol = {
   "headerName": "Leader",
   "field": "Leader",
   "colID": "Leader",
-  "type": Text,
+  "type": 2,
+  "enums": 'Text'
 };
 
 var defaultLocationCol = {
@@ -72,7 +75,8 @@ var defaultLocationCol = {
   "headerName": "Location",
   "field": "Location",
   "colID": "Location",
-  "type": Text,
+  "type": 2,
+  "enums": 'Text'
 };
 
 var defaultTypeCol = {
@@ -83,7 +87,8 @@ var defaultTypeCol = {
   "headerName": "Type",
   "field": "Type",
   "colID": "Type",
-  "type": Text,
+  "type": 2,
+  "enums": 'Text'
 };
 
 var defaultCountCol = {
@@ -94,7 +99,8 @@ var defaultCountCol = {
   "headerName": "Count",
   "field": "Count",
   "colID": "Count",
-  "type": Number,
+  "type": 0,
+  "enums": 'Integer'
 };
 
 
@@ -201,15 +207,15 @@ function createNewPlan() {
       }
       }
       columnDefinitions.columns.push(defaultNameCol);
-      emptyRow[$(column).find(".typeSelect").first().val()] = "";
+      emptyRow[$(column).find("Text").first().val()] = "";
       columnDefinitions.columns.push(defaultLeaderCol);
-      emptyRow[$(column).find(".typeSelect").first().val()] = "";
+      emptyRow[$(column).find("Text").first().val()] = "";
       columnDefinitions.columns.push(defaultLocationCol);
-      emptyRow[$(column).find(".typeSelect").first().val()] = "";
+      emptyRow[$(column).find("Text").first().val()] = "";
       columnDefinitions.columns.push(defaultTypeCol);
-      emptyRow[$(column).find(".typeSelect").first().val()] = "";
+      emptyRow[$(column).find("Text").first().val()] = "";
       columnDefinitions.columns.push(defaultCountCol);
-      emptyRow[$(column).find(".typeSelect").first().val()] = 0;
+      emptyRow[$(column).find("Integer").first().val()] = 0;
 
           if($(column).find(".colName").first().val()) {
             var columnInfo = {
