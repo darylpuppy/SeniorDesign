@@ -110,34 +110,39 @@ function addRow() {
   var newRow = {
     ID: randRange(10000000, 99999999)
   };
-
   // Add a new row to each page at incrementing index (see below)
   index = i ; // to insert at same relative pos. for each page
   addRowAtIndex(index, newRow);
 
+
   // Increment the number of rows to show per page and update grid
 }
 
-// When multiple pages exist, must add row at same relative
-// index for each page
+//iterates through pivot columns to add rows to each pivot
 function addRowAtIndex(index, newRow) {
   gridOptions.api.updateRowData({add: [newRow], addIndex: index});
-}
-
-function getRowAtIndex(targetIndex, callback) {
-  gridOptions.api.forEachNode( function(rowNode, index) {
-    if(targetIndex == index) {
-        callback(rowNode);
-    }
-  });
+  
+  temp = this.selectedPivot;
+  for (this.selectedPivot = 0; this.selectedPivot < this.pivotColumn.types.length; this.selectedPivot++){
+    updatePivotValue();
+    gridOptions.api.updateRowData({add: [newRow], addIndex: index});
+    console.log('Added Rows');
+    this.savePlanButton(false);
+    
+  }
+  this.selectedPivot = temp;
+  updatePivotValue();  
 }
 
 function removeRowAtIndex(targetIndex) {
+  //console.log("Attempting Removing row "+targetIndex);
+  let temp = 0;
   gridOptions.api.forEachNode( function(rowNode, index) {
-    if(rowNode.index == targetIndex) {
+    if(temp == targetIndex) {
+        //console.log("Removing row "+index);
         gridOptions.api.updateRowData({remove: [rowNode.data]});
-        
     }
+    temp++
   });
 }
 
@@ -150,33 +155,37 @@ function getSelectedRowToRemove(callback) {
 // Removes a selected row across all pages
 // WARNING: Currently does not work properly, disabled.
 function removeRow(selectedRow) {
-  
+ 
   var row;
   getSelectedRowToRemove(function(selectedRow) {
     row = selectedRow[0]; // Since row selection is set to singlular, we only want the first
   })                      // element in the list of selected rows
-  
+
   // Get the index for the selected row
   var index = row.childIndex;
+  console.log("Row is at index: "+ index);
 
-  // Find the "relative" row location for each page and remove rows
-  // from page 1 onward
-  //index = index % pageSize;
-  var selectedData = gridOptions.api.getSelectedRows();
-  var res = gridOptions.api.updateRowData({remove: selectedData});
+  console.log("Removing row "+index);
 
-  // Calculate number of *full* pages in the plan
-  numOfPages = Math.floor((numOfRows()) / pageSize);
+  temp = this.selectedPivot;
+  for (this.selectedPivot = 0; this.selectedPivot < this.pivotColumn.types.length; this.selectedPivot++){
+    updatePivotValue();
+    removeRowAtIndex(index);
+    console.log('removed Rows');
+    this.savePlanButton(false);
+    gridOptions.api.refreshCells();
+  }
+  this.selectedPivot = temp;
+  updatePivotValue();
 
-  removeRowAtIndex(index);
-  // Decrement the number of rows to show per page and update grid
 
-
-
-
-  gridOptions.api.refreshCells();
   
+  // Decrement the number of rows to show per page and update grid
+  //gridOptions.api.paginationSetPageSize(Number(pageSize));
+  
+
 }
+
 
 function editHeaderName() {
   // Gets the header to edit and the new name from input fields

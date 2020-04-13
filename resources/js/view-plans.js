@@ -42,6 +42,63 @@ var idDef = {
   "colID": "ID"
 };
 
+var defaultNameCol = {
+  "editable": true,
+  "resizable": true,
+  "filter": false,
+  "sortable": false,
+  "headerName": "Name",
+  "field": "Name",
+  "colID": "Name",
+  "type": Text,
+};
+
+var defaultLeaderCol = {
+  "editable": true,
+  "resizable": true,
+  "filter": false,
+  "sortable": false,
+  "headerName": "Leader",
+  "field": "Leader",
+  "colID": "Leader",
+  "type": Text,
+};
+
+var defaultLocationCol = {
+  "editable": true,
+  "resizable": true,
+  "filter": false,
+  "sortable": false,
+  "headerName": "Location",
+  "field": "Location",
+  "colID": "Location",
+  "type": Text,
+};
+
+var defaultTypeCol = {
+  "editable": true,
+  "resizable": true,
+  "filter": false,
+  "sortable": false,
+  "headerName": "Type",
+  "field": "Type",
+  "colID": "Type",
+  "type": Text,
+};
+
+var defaultCountCol = {
+  "editable": true,
+  "resizable": true,
+  "filter": false,
+  "sortable": false,
+  "headerName": "Count",
+  "field": "Count",
+  "colID": "Count",
+  "type": Number,
+};
+
+
+
 emptyRow["ID"] = randRange(10000000, 99999999);
 
 columnDefinitions.columns.push(idDef);
@@ -125,12 +182,13 @@ $(".typeSelect").change(function(){
 })
 
 function createNewPlan() {
+  
     if(sessionStorage.getItem("permission") === "S"){
       // getting all the plan data from the html form
       var columns = $("#columnForm > .colInfo");
 	  var pivotValues = $(".pivotValue");
       planNameToCreate = document.getElementById("newPlanName").value;
-
+      
       // creating a JSON object out of columnDefinitions, will have to tweak
       // after implementing pages
       for(var i = 0 ; i < columns.length; i++) {
@@ -140,8 +198,19 @@ function createNewPlan() {
 			var enumVals = $(column).find(".enumName");
 			for (var j = 0;j < enumVals.length;j++){
 				types += $(enumVals[j]).val() + " ";
-			}
-		  }
+      }
+      }
+      columnDefinitions.columns.push(defaultNameCol);
+      emptyRow[$(column).find(".typeSelect").first().val()] = "";
+      columnDefinitions.columns.push(defaultLeaderCol);
+      emptyRow[$(column).find(".typeSelect").first().val()] = "";
+      columnDefinitions.columns.push(defaultLocationCol);
+      emptyRow[$(column).find(".typeSelect").first().val()] = "";
+      columnDefinitions.columns.push(defaultTypeCol);
+      emptyRow[$(column).find(".typeSelect").first().val()] = "";
+      columnDefinitions.columns.push(defaultCountCol);
+      emptyRow[$(column).find(".typeSelect").first().val()] = 0;
+
           if($(column).find(".colName").first().val()) {
             var columnInfo = {
 				"editable": true,
