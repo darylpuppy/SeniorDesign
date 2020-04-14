@@ -131,7 +131,7 @@ function savePlan() {
 	closeSaveAs();
 }
 
-function savePlanButton() {
+function savePlanButton(notification) {
   var planName = document.getElementById("planName").value
 
   // Specified if user selects 'save as', otherwise save with current name
@@ -175,7 +175,8 @@ function savePlanButton() {
 
   // Closes save as modal if showing
   closeSaveAs();
-  alert("Plan Saved");
+  if(notification == true)
+    alert("Plan Saved");
 }
 
 function openSaveAs() {
