@@ -66,12 +66,22 @@
 		</form>
 
 		<form id="permissionsForm" action="#" method="get" style="margin-top: 15px">
-			<label>Allowed Users </label>
+			<label>Read/Write Users </label>
 			<div>
 			  <div>
 				<div>
-					<label>User: </label><select class="userSelect"></select>
-					<button class="removeParent" style="display:inline" type="button" name="removepivot">Remove</button>
+					<label>User: </label><select class="readWriteUserSelect"></select>
+					<button class="removeParent" style="display:inline" type="button">Remove</button>
+				</div>
+				<span class="addFirstSibling"><button type="button" name="addPivot">Add User</button></span>
+			  </div>
+			</div>
+			<label>Read Only Users </label>
+			<div>
+			  <div>
+				<div>
+					<label>User: </label><select class="readOnlyUserSelect"></select>
+					<button class="removeParent" style="display:inline" type="button">Remove</button>
 				</div>
 				<span class="addFirstSibling"><button type="button" name="addPivot">Add User</button></span>
 			  </div>

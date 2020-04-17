@@ -27,7 +27,7 @@ var gridOptions = {
 var planToLoad = "";
 var planToDelete = "";
 var planNameToCreate = "";
-var planDefinition = {pivotColumn: {}, columns: [], users: []};
+var planDefinition = {pivotColumn: {}, columns: [], readWriteUsers: [], readOnlyUsers: []};
 var rowDefinitions = [];
 var emptyRow = {};
 var users;
@@ -67,7 +67,13 @@ function loadUserDropdown(){
 			userList = JSON.parse(data);
 			this.users = userList.map(user => user.Email);
 
-			var $userDropdown = $(".userSelect");
+			var $userDropdown = $(".readWriteUserSelect");
+			$userDropdown.append($("<option />").val("Everyone").text("Everyone"));
+			for (var user of this.users){
+				$userDropdown.append($("<option />").val(user).text(user));
+			}
+			
+			$userDropdown = $(".readOnlyUserSelect");
 			$userDropdown.append($("<option />").val("Everyone").text("Everyone"));
 			for (var user of this.users){
 				$userDropdown.append($("<option />").val(user).text(user));
@@ -156,7 +162,8 @@ function createNewPlan() {
       // getting all the plan data from the html form
       var columns = $("#columnForm > .colInfo");
 	  var pivotValues = $(".pivotValue");
-	  var users = $(".userSelect");
+	  var readWriteUsers = $(".readWriteUserSelect");
+	  var readOnlyUsers = $(".readOnlyUserSelect");
       planNameToCreate = document.getElementById("newPlanName").value;
 
       // creating a JSON object out of columnDefinitions, will have to tweak
@@ -187,11 +194,12 @@ function createNewPlan() {
           }
       }
 
-	  for (var user of users){
-	  	  this.planDefinition.users.push($(user).val());
+	  for (var user of readWriteUsers){
+	  	  this.planDefinition.readWriteUsers.push($(user).val());
 	  }
-	  console.log(this.planDefinition);
-	  return;
+	  for (var user of readOnlyUsers){
+	  	  this.planDefinition.readOnlyUsers.push($(user).val());
+	  }
 
       this.planDefinition.pivotColumn.name = document.getElementById("pivotName").value; // save the name of the pivote value
 	  this.planDefinition.pivotColumn.types = [];

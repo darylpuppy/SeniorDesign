@@ -277,7 +277,13 @@ function loadPlanData(file, isDataView) { //callback from downloadFile
 function loadPlanDef(file, isDataView) { //callback from downloadFile
 	this.columnDefs = file.columns;
 	this.pivotColumn = file.pivotColumn;
+	var editable = !file.readWriteUsers
+		|| file.readWriteUsers.some((user) => user == "Everyone" || user == sessionStorage.getItem("email"));
 	if (isDataView){
+
+		for (var colDef of this.columnDefs){
+			colDef.editable = editable;
+		}
 		gridOptions.api.setColumnDefs(this.columnDefs);
 		$(tableHeader).text("Pivot Name " +  this.pivotColumn.name);
 		this.selectedPivot = 0;
@@ -286,35 +292,12 @@ function loadPlanDef(file, isDataView) { //callback from downloadFile
 	else{
 		for(var column of this.pivotColumn.types){
 			this.baseColumnOptions.push({
-				editable: true,
+				editable: editable,
 				resizable: true,
 				filter: false,
 				sortable: false,
 				headerName: column,
 				field: column,
-				/*valueGetter:function(params){
-					return params.data[column];
-				},
-				valueSetter: function(params){
-					var existingModifiation = this.modifications.find((modification) => {
-						for (var groupProp of this.groupProps){
-							if (params.data[groupProp] != modification[groupProp]){
-								return false;
-							}
-						}
-						return true;
-					});
-
-					if (!existingModification){
-						existingModifiation = {};
-						for (var groupProp of this.groupProps){
-							existingModification[groupProp] = params.data[groupProp];
-						}
-						this.modifications.push(existingModification);
-					}
-
-					existingModifiation[this.aggregationProperty] = (existingModifiation[this.aggregationProperty] ?? 0) +  params.newValue - params.oldValue;
-				}*/
 				colID: column
 			});
 		}
