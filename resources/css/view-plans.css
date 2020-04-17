@@ -134,6 +134,7 @@ body {
   bottom: 0;
   right: 0;
   max-height: 750px;
+  z-index: 2;
 }
 
 input[type=text]{
