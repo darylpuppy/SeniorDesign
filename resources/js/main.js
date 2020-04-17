@@ -10,7 +10,6 @@ var gridOptions = {
   stopEditingWhenGridLosesFocus: true,
 	paginationAutoPageSize: true,
   onGridReady: gridReady,
-  onCellValueChanged: cellValueChanged,
 
   // defines default column properties that are inherited
   // by default by any new columns
@@ -57,38 +56,6 @@ function loadPlanNames(plans){
 function gridReady() {
   gridOptions.columnApi.autoSizeColumns();
   updatePlanList();
-}
-
-// Executes after a cell is edited, used to check if
-// propogate mode is enabled and if so, automatically
-// edits all rows in that position for all pages
-function cellValueChanged(event) {
-  propagateForwardMode = document.getElementById("propagateForward").checked;
-  propagateBackwardMode = document.getElementById("propagateBackward").checked;
-
-  // Gets the name of the column that was edited and that row's index in the grid
-  colEdited = event.column.colId;
-  editIndex = event.node.childIndex;
-  
-  // Propagate cell edits forward if enabled
-  if(propagateForwardMode) {
-    // For indexes *ahead* of the edited cell, propagate changes if the ID datavalues match
-    gridOptions.api.forEachNode( function(rowNode, index) {
-      if(rowNode.data.ID == event.data.ID && index >= editIndex) {
-          rowNode.data[colEdited] = event.data[colEdited];
-      }
-    });
-  }
-
-  // Propagate cell edits backward if enabled
-  if(propagateBackwardMode) {
-    // For indexes *behind* the edited cell, propagate changes if the ID datavalues match
-    gridOptions.api.forEachNode( function(rowNode, index) {
-      if(rowNode.data.ID == event.data.ID && index <= editIndex) {
-          rowNode.data[colEdited] = event.data[colEdited];
-      }
-    });
-  }
 }
 
 // Gets all rows across pages at a relative location, representing
@@ -143,34 +110,39 @@ function addRow() {
   var newRow = {
     ID: randRange(10000000, 99999999)
   };
-
   // Add a new row to each page at incrementing index (see below)
   index = i ; // to insert at same relative pos. for each page
   addRowAtIndex(index, newRow);
 
+
   // Increment the number of rows to show per page and update grid
 }
 
-// When multiple pages exist, must add row at same relative
-// index for each page
+//iterates through pivot columns to add rows to each pivot
 function addRowAtIndex(index, newRow) {
   gridOptions.api.updateRowData({add: [newRow], addIndex: index});
-}
-
-function getRowAtIndex(targetIndex, callback) {
-  gridOptions.api.forEachNode( function(rowNode, index) {
-    if(targetIndex == index) {
-        callback(rowNode);
-    }
-  });
+  
+  temp = this.selectedPivot;
+  for (this.selectedPivot = 0; this.selectedPivot < this.pivotColumn.types.length; this.selectedPivot++){
+    updatePivotValue();
+    gridOptions.api.updateRowData({add: [newRow], addIndex: index});
+    console.log('Added Rows');
+    this.savePlanButton(false);
+    
+  }
+  this.selectedPivot = temp;
+  updatePivotValue();  
 }
 
 function removeRowAtIndex(targetIndex) {
+  //console.log("Attempting Removing row "+targetIndex);
+  let temp = 0;
   gridOptions.api.forEachNode( function(rowNode, index) {
-    if(rowNode.index == targetIndex) {
+    if(temp == targetIndex) {
+        //console.log("Removing row "+index);
         gridOptions.api.updateRowData({remove: [rowNode.data]});
-        
     }
+    temp++
   });
 }
 
@@ -183,33 +155,37 @@ function getSelectedRowToRemove(callback) {
 // Removes a selected row across all pages
 // WARNING: Currently does not work properly, disabled.
 function removeRow(selectedRow) {
-  
+ 
   var row;
   getSelectedRowToRemove(function(selectedRow) {
     row = selectedRow[0]; // Since row selection is set to singlular, we only want the first
   })                      // element in the list of selected rows
-  
+
   // Get the index for the selected row
   var index = row.childIndex;
+  console.log("Row is at index: "+ index);
 
-  // Find the "relative" row location for each page and remove rows
-  // from page 1 onward
-  //index = index % pageSize;
-  var selectedData = gridOptions.api.getSelectedRows();
-  var res = gridOptions.api.updateRowData({remove: selectedData});
+  console.log("Removing row "+index);
 
-  // Calculate number of *full* pages in the plan
-  numOfPages = Math.floor((numOfRows()) / pageSize);
+  temp = this.selectedPivot;
+  for (this.selectedPivot = 0; this.selectedPivot < this.pivotColumn.types.length; this.selectedPivot++){
+    updatePivotValue();
+    removeRowAtIndex(index);
+    console.log('removed Rows');
+    this.savePlanButton(false);
+    gridOptions.api.refreshCells();
+  }
+  this.selectedPivot = temp;
+  updatePivotValue();
 
-  removeRowAtIndex(index);
-  // Decrement the number of rows to show per page and update grid
 
-
-
-
-  gridOptions.api.refreshCells();
   
+  // Decrement the number of rows to show per page and update grid
+  //gridOptions.api.paginationSetPageSize(Number(pageSize));
+  
+
 }
+
 
 function editHeaderName() {
   // Gets the header to edit and the new name from input fields
@@ -262,15 +238,7 @@ function loadPlanData(file, isDataView) { //callback from downloadFile
 		gridOptions.api.setRowData(this.allData[0].pageData);
 	}
 	else{
-		this.aggregationProperty = $(".aggregationProperty").val();
-		var summaryData = {};
-		for (pageData of this.allData){
-			summaryData[pageData.pageName] = 0;
-			for (rowData of pageData.pageData){
-				summaryData[pageData.pageName] += Number(rowData[aggregationProperty] ?? 0);
-			}
-		}
-		gridOptions.api.setRowData([summaryData]);
+		this.aggregateData();
 	}
 }
 
@@ -317,6 +285,7 @@ function loadPlanDef(file, isDataView) { //callback from downloadFile
 				$aggregateDropdown.append($("<option />").val(column.headerName).text(column.headerName));
 			}
 		}
+		this.aggregateData();
 		gridOptions.api.setColumnDefs(this.baseColumnOptions);
 	}
 }
@@ -397,6 +366,7 @@ function groupArray(groupProps, allData, pivotColumn){
 	}
 	else{
 		var summaryData = {};
+		console.log(this.allData);
 		for (pageData of this.allData){
 			summaryData[pageData.pageName] = 0;
 			for (rowData of pageData.pageData){
@@ -428,15 +398,19 @@ function groupData(){
 		field: column,
 		colID: column
 	}}).concat(this.baseColumnOptions);
+	
+	this.savePlan();
+	this.initialValues = this.groupArray(this.groupProps, this.allData, this.pivotColumn.types);
 	gridOptions.api.setColumnDefs([])
 	gridOptions.api.setColumnDefs(columnOptions);
-
-	var summaryData = this.groupArray(this.groupProps, this.allData, this.pivotColumn.types);
-	this.initialValues = JSON.parse(JSON.stringify(summaryData));
-	gridOptions.api.setRowData(summaryData);
+	gridOptions.api.setRowData(JSON.parse(JSON.stringify(this.initialValues)));
 }
 
 function aggregateData(){
+	if (!this.finishedLoading){
+		this.finishedLoading = true;
+		return;
+	}
 	aggregationProperty = $('.aggregationProperty').val();
 	this.groupData();
 }
