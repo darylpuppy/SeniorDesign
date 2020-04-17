@@ -249,6 +249,62 @@ function downloadFile(fileName, fileKey, callback, isDataView) {
   })
 }
 
+var dropzone;
+function setup(){
+  dropzone = select('#dropzone');
+  dropzone.style('opacity', .0);
+  dropzone.dragOver(highlight);
+  dropzone.dragLeave(unhighlight);
+  dropzone.drop(gotFile, unhighlight);
+
+
+}
+
+function gotFile(file) {
+  //createP(file.name + ' ' + file.size);
+  //let input = new new p5.file()
+  //var table = createFileInput(file.data);
+  //var table= loadTable(file.data, 'csv', 'header');
+  //var input = createP
+  //var text = file.data;
+  //console.log(text);
+  
+  console.log("opening file: " + file.name);
+  console.log(file.Data);
+  var file = e.target.files[0];
+  if (!file) {
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var contents = e.target.result;
+    displayContents(contents);
+  };
+  reader.readAsText(file);
+
+}
+
+function displayContents(contents) {
+  var element = document.getElementById('file-content');
+  element.textContent = contents;
+}
+
+function highlight() {
+  dropzone.style('opacity', .25);
+  dropzone.style('z-index', 1000);
+}
+
+function unhighlight() {
+  dropzone.style('opacity', .0);
+  dropzone.style('z-index', 1);
+}
+
+
+function exportPlan(){
+  console.log('exportPlan');
+
+}
+
 /*
 
 //////// Unused functions for creating/viewing folders and deleting files ////////
