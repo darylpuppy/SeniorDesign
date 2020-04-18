@@ -15,14 +15,12 @@ var s3 = new AWS.S3({
 });
 
 function downloadPlanDefs(){
-  console.log("Loading plan names");
   // Loads list of plans to load from
   plans = [];
   s3.listObjects({ Prefix: "plans/" }, function(err, data) { //function() is a callback (ASYNC!!!)
     if (err) {
       return alert("There was an error getting the list of plans");
     }
-    //console.log(data);
     plans = [];
     var items = (data.Contents.length);
 
@@ -31,19 +29,26 @@ function downloadPlanDefs(){
       if(planName.endsWith("/")){
         // Trim path out of plan name ('plan/' is first 6 chars, '/' is last char)
         planName = planName.substring(6, planName.length-1);
-        //console.log(planName);
         plans.push(planName);
       }
     }
-    loadPlanNames(plans);
+    loadPlanNames(plans, 0);
   });
 }
 
-function loadPlanNames(plans){
-  for(i = 0; i < plans.length; i++){
-    var rowData = '[{"planName": "' + plans[i] + '"}]';
-    gridOptions.api.updateRowData({add: JSON.parse(rowData)});
-  }
+function loadPlanNames(plans, index){
+	downloadPlanDef(plans[index], (planDef) => {
+		if (!planDef.readWriteUsers
+			|| planDef.readWriteUsers.some((user) => user == "Everyone" || user == sessionStorage.getItem("email"))
+			|| planDef.readOnlyUsers.some((user) => user == "Everyone" || user == sessionStorage.getItem("email"))){
+
+			var rowData = '[{"planName": "' + plans[index] + '"}]';
+			gridOptions.api.updateRowData({add: JSON.parse(rowData)});
+		}
+		if (index < plans.length - 1){
+			loadPlanNames(plans, index + 1);
+		}
+	})
 }
 
 // Save plan of specified name
@@ -71,7 +76,6 @@ function uploadNewPlan(rowData, colDef) {
 }
 
 function uploadPlanData(rowData, colDef, folderKey){
-	console.log(rowData);
 	// Create a new file with the name of the plan
 	var rowDataName = planNameToCreate + "Data.json";
 	var rowDataFile = new File([rowData], rowDataName);
