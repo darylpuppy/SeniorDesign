@@ -234,6 +234,8 @@ function uploadFile(file, fileKey, folderName) {
 }
 
 function downloadFile(fileName, fileKey, callback, isDataView) {
+  console.log(fileName);
+  console.log(fileKey);
   file = s3.getObject({
     Bucket: bucketName,
     Key: fileKey
@@ -271,6 +273,7 @@ function gotFile(file) {
 
   function handleData(data){
     handleCSVData = data;
+    handleCSVData.name = file.name;
     console.log(handleCSVData);
   }
   loadTable(file.data, (data) => handleData(data), 'header');
@@ -301,6 +304,31 @@ function unhighlight() {
 
 function exportPlan(){
   console.log('exportPlan');
+
+}
+
+
+function testDataImport(temp){
+  console.log(temp);
+}
+
+function importPlan(){
+  //setCurrentPlan('123345');
+  //loadPlan("123345", true);
+
+  //setCurrentPlan("planToLoad");
+  importPlanName = localStorage.getItem('planToLoad');
+
+  console.log(importPlanName);
+
+  var fileName = importPlanName + "Data.json";
+  var folderName = importPlanName;
+  var folderKey = "plans/" + encodeURIComponent(folderName) + "/"; //specifies folder 
+  var fileKey = folderKey + fileName;
+
+  console.log(fileKey);
+  downloadFile(fileName, fileKey, testDataImport, true);
+  //loadPlan(importPlanName, true);
 
 }
 
