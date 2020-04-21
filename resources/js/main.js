@@ -246,6 +246,54 @@ function loadPlanDef(file, isDataView) { //callback from downloadFile
 	this.columnDefs = file.columns;
 	this.pivotColumn = file.pivotColumn;
 	if (isDataView){
+		console.log(this.columnDefs);
+		for (var columnDef of this.columnDefs){
+			console.log(columnDef);
+			delete columnDef.field;
+			columnDef.valueGetter = function(params){
+				console.log(params);
+				return params.data[params.colDef.colID];
+			};
+			columnDef.valueSetter = function(params){
+				var newVal;
+				if (params.colDef.type == 0){
+					try{
+						newVal = Number(params.newValue);
+						if (!Number.isInteger(newVal)){
+							return false;
+						}
+					}
+					catch(err){
+						return false;
+					}
+				}
+				else if (params.colDef.type == 1){
+					try{
+						newVal = Number(params.newValue);
+						if (Number.isNaN(newVal)){
+							return false;
+						}
+					}
+					catch(err){
+						return false;
+					}
+				}
+				else if (params.colDef.type == 2){
+					newVal = params.newValue;
+				}
+				else if (params.colDef.type == 3){
+					newVal = params.newValue;
+					if (!params.colDef.enums.some((val) => val == newVal)){
+						return false;
+					}
+				}
+				else{
+					newVal = params.newValue;
+				}
+				params.data[params.colDef.colID] = newVal;
+				return true;
+			}
+		}
 		gridOptions.api.setColumnDefs(this.columnDefs);
 		$(tableHeader).text("Pivot Name " +  this.pivotColumn.name);
 		this.selectedPivot = 0;
@@ -260,29 +308,15 @@ function loadPlanDef(file, isDataView) { //callback from downloadFile
 				sortable: false,
 				headerName: column,
 				field: column,
-				/*valueGetter:function(params){
-					return params.data[column];
-				},
 				valueSetter: function(params){
-					var existingModifiation = this.modifications.find((modification) => {
-						for (var groupProp of this.groupProps){
-							if (params.data[groupProp] != modification[groupProp]){
-								return false;
-							}
-						}
+					try{
+						params.data[column] = Number(params.newValue);
 						return true;
-					});
-
-					if (!existingModification){
-						existingModifiation = {};
-						for (var groupProp of this.groupProps){
-							existingModification[groupProp] = params.data[groupProp];
-						}
-						this.modifications.push(existingModification);
 					}
-
-					existingModifiation[this.aggregationProperty] = (existingModifiation[this.aggregationProperty] ?? 0) +  params.newValue - params.oldValue;
-				}*/
+					catch(err){
+						return false;
+					}
+				},
 				colID: column
 			});
 		}
