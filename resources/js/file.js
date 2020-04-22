@@ -16,6 +16,15 @@ var s3 = new AWS.S3({
 });
 
 
+//stores plan json files in here
+var importedJsonPlan = {
+  planName: null,
+  JsonData: null,
+  JsonDefs: null,
+  JsonProp: null
+}
+
+
 // Converts a CSV file (with header) to a JSON file
 function convertCSV(csv) {
   //console.log(csv)
@@ -251,6 +260,96 @@ function downloadFile(fileName, fileKey, callback, isDataView) {
   })
 }
 
+
+
+function downloadFileImporting(fileName, fileKey, callback, isDataView) {
+  console.log(fileName);
+  console.log(fileKey);
+  file = s3.getObject({
+    Bucket: bucketName,
+    Key: fileKey
+  }, function (err, data) {
+      if(err) {
+        console.log("Error retrieving file");
+        return "derp";
+      } else {
+        console.log("File retrieved");
+        data = data.Body.toString();
+        callback(JSON.parse(data), isDataView);
+        //return(JSON.parse(data));
+      }
+  })
+}
+
+
+function importPlan(){//import plan
+  importPlanName = localStorage.getItem('planToLoad');
+  importedJsonPlan.planName = importPlanName;
+  ImportJson()
+}
+
+function ImportJson(temp){//import plan data
+  var fileName = importedJsonPlan.planName + "Data.json";
+  var folderName = importedJsonPlan.planName;
+  var folderKey = "plans/" + encodeURIComponent(folderName) + "/"; //specifies folder 
+  var fileKey = folderKey + fileName;
+
+  downloadFileImporting(fileName, fileKey, ImportDef, true);
+}
+
+
+function ImportDef(importPlanJsonData){//import plan defs
+
+  importedJsonPlan.JsonData = importPlanJsonData;//saves import plan data
+  var fileName = importedJsonPlan.planName + "Def.json";
+  var folderName = importedJsonPlan.planName;
+  var folderKey = "plans/" + encodeURIComponent(folderName) + "/"; //specifies folder 
+  var fileKey = folderKey + fileName;
+
+  downloadFileImporting(fileName, fileKey, Importprop, true);
+}
+
+function Importprop(importPlanJsonDef){//import plan props
+  
+  importedJsonPlan.JsonDefs = importPlanJsonDef;//saves import plan defs
+  var fileName = "properties.json";
+  var folderName = importedJsonPlan.planName;
+  var folderKey = "plans/" + encodeURIComponent(folderName) + "/"; //specifies folder 
+  var fileKey = folderKey + fileName;
+
+  downloadFileImporting(fileName, fileKey, parseImport, true);
+}
+
+
+function parseImport(importPlanJsonProp){
+
+  importPlanName = localStorage.getItem('planToLoad');
+  importedJsonPlan.JsonProp = importPlanJsonProp;//saves import plan props
+
+  //=====================================================
+  console.log("Plan Name: " + importedJsonPlan.planName);
+  console.log("imported Plan Data: " + importedJsonPlan.planName);
+  console.log(importedJsonPlan.JsonData);
+  console.log("imported Plan Def: " + importedJsonPlan.planName);
+  console.log(importedJsonPlan.JsonDefs);
+  console.log("imported Prop: " + importedJsonPlan.planName);
+  console.log(importedJsonPlan.JsonProp);
+ // console.log(JSON.parse({"pageSize":1}));
+
+}
+
+function parseImportJsonData(){
+  console.log('inside parseImportJsonData');
+}
+
+function parseImportJsonDef(){
+  console.log('inside parseImportJsonDef');
+}
+
+
+
+
+
 //drag and drop event
 var dropzone;
 function setup(){
@@ -308,29 +407,8 @@ function exportPlan(){
 }
 
 
-function testDataImport(temp){
-  console.log(temp);
-}
 
-function importPlan(){
-  //setCurrentPlan('123345');
-  //loadPlan("123345", true);
 
-  //setCurrentPlan("planToLoad");
-  importPlanName = localStorage.getItem('planToLoad');
-
-  console.log(importPlanName);
-
-  var fileName = importPlanName + "Data.json";
-  var folderName = importPlanName;
-  var folderKey = "plans/" + encodeURIComponent(folderName) + "/"; //specifies folder 
-  var fileKey = folderKey + fileName;
-
-  console.log(fileKey);
-  downloadFile(fileName, fileKey, testDataImport, true);
-  //loadPlan(importPlanName, true);
-
-}
 
 
 
