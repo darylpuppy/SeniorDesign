@@ -327,14 +327,46 @@ function parseImport(importPlanJsonProp){
   importedJsonPlan.JsonProp = importPlanJsonProp;//saves import plan props
 
   //=====================================================
-  console.log("Plan Name: " + importedJsonPlan.planName);
-  console.log("imported Plan Data: " + importedJsonPlan.planName);
-  console.log(importedJsonPlan.JsonData);
-  console.log("imported Plan Def: " + importedJsonPlan.planName);
-  console.log(importedJsonPlan.JsonDefs);
-  console.log("imported Prop: " + importedJsonPlan.planName);
-  console.log(importedJsonPlan.JsonProp);
- // console.log(JSON.parse({"pageSize":1}));
+
+  pivotColumnName = importedJsonPlan.JsonDefs.pivotColumn.name;
+  var currentPageName = importedJsonPlan.JsonData;
+  var currentPageData = currentPageName[0].pageData;
+  csvCurrentPageName = currentPageName[0].pageName
+
+  //gets the column names
+  let csvString = pivotColumnName + ',';
+
+  var obj = currentPageData[0];
+  for (var key in obj){
+      var attrName = key;
+      csvString = csvString + attrName + ',';
+
+  }
+  csvString = csvString.slice(0, -1);
+  csvString = csvString + '\n' ;
+
+  //done getting columns names...time to get rows information
+
+  for (j = 0; j < currentPageName.length; j++){
+    csvCurrentPageName = currentPageName[j].pageName;
+    currentPageData = currentPageName[j].pageData;
+
+    //gets the row entries per row per page
+    for (var i = 0; i < currentPageData.length; i++){
+    csvString = csvString + csvCurrentPageName + ',';
+    obj = currentPageData[i];
+    for (var key in obj){
+        var attrName = key;
+        var attrValue = obj[key];
+        csvString = csvString + attrValue + ',';
+    }
+    csvString = csvString.slice(0, -1);
+    csvString = csvString + '\n';
+    }
+  }
+  console.log(csvString);
+  console.log("Plan coverted to CSV complete");
+
 
 }
 
@@ -345,10 +377,6 @@ function parseImportJsonData(){
 function parseImportJsonDef(){
   console.log('inside parseImportJsonDef');
 }
-
-
-
-
 
 //drag and drop event
 var dropzone;
@@ -385,9 +413,6 @@ function handleData(data){
   handleCSVData = data;
   console.log(handleCSVData);
 }
-
-
-
 
 function highlight() {
   dropzone.style('opacity', .25);
