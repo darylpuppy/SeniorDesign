@@ -48,7 +48,7 @@ function appendToUsersFile(user){
 
         // check if the user already exists by looping through the userList and comparing email values
         for(var i = 0; i < userList.length; i++){
-          if(userList[i]["Email"] === userJSON.Email){
+          if(userList[i]["Email"] === userJSON.email){
             alert("This user already exists.");
             return false;
           }
@@ -64,32 +64,6 @@ function appendToUsersFile(user){
             ACL: "public-read"
           }
         });
-
-		var permissionFile = s3.getObject({
-			Bucket: bucketName,
-			Key: "permissions.json"
-		}, function(err, data){
-				if (err){
-					return false;
-				}
-				else{
-					data = JSON.parse(data.Body.toString());
-					data.push({Email: userJSON.Email, Permission: "R"});
-					var uploadPermission = new AWS.S3.ManagedUpload({
-						params: {
-							Bucket: bucketName,
-							Key: "permissions.json",
-							Body: JSON.stringify(data)
-						}
-					});
-					var permissionPromise = uploadPermission.promise();
-					permissionPromise.then(
-						(data) => console.log("Success"),
-						(err) => console.log(err)
-					)
-				}
-			}
-		)
 
         var promise = upload.promise();
 
