@@ -364,11 +364,49 @@ function parseImport(importPlanJsonProp){
     csvString = csvString + '\n';
     }
   }
-  console.log(csvString);
+  var csvData  = Papa.parse(csvString);
+  console.log(csvData);
   console.log("Plan coverted to CSV complete");
+  //Papa.unparse(csvData.data);
+  downloadImportedCSV(Papa.unparse(csvData.data));
 
 
 }
+
+function downloadImportedCSV(csv){
+  /*
+  const blob = new Blob([csvData], {type:'text/csv'});
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  console.log(url);
+  a.setAttribute('hidden','');
+  a.setAttribute('download',  'download.csv');
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  console.log(importedJsonPlan.planName + "downloaded");
+
+  */
+  var csvData = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+  var csvURL =  null;
+  let csvFileName = importedJsonPlan.planName + '.csv';
+  if (navigator.msSaveBlob)
+  {
+      csvURL = navigator.msSaveBlob(csvData, csvFileName);
+  }
+  else
+  {
+      csvURL = window.URL.createObjectURL(csvData);
+  }
+
+  var tempLink = document.createElement('a');
+  tempLink.href = csvURL;
+  tempLink.setAttribute('download', csvFileName);
+  tempLink.click();
+
+}
+
+
 
 function parseImportJsonData(){
   console.log('inside parseImportJsonData');
