@@ -26,47 +26,69 @@
     </div>
 
     <div id="newPlan">
-      <form id="planForm" action="#" method="get">
-        <label>Plan Name:  </label><input id="newPlanName" type="text">
-      </form>
-      <form id="columnForm" action="#" method="get">
-        <div class="colInfo">
-          <label>Column Name:  </label><input class="colName" type="text"><div></div>
-		  <label>Type: </label>
-		  <select class="typeSelect">
-			  <option value="int">Integer</option>
-			  <option value="decimal">Decimal</option>
-			  <option value="text">Text</option>
-			  <option value="enum">Enumerated</option>
-		  </select>
-		  <button class="darkblue ghost toggleEnums enumOnly" style="display: none">Edit values</button>
-          <button class="removeParent" style="display:inline" type="button" name="removeColumn">Remove</button>
-		  <span class="enumOnly" style="display:none">
-			<p>
-				<input class="enumName" type="text"/>
-				<button type="button" class="removeParent">Remove</button>
-			</p>
-			<button class="addFirstSibling" type="button">Add Value</button>
-		  </span>
-        </div>
-        <span class="addFirstSibling"><button type="button" name="addColumn">Add Column</button></span>
-      </form>
-
-      <form id="pivotForm" action="#" method="get">
-        <label>Pivot Name: </label><input id="pivotName" class ="pivName" type ='text'>
-        <div>
-          <div>
-			<div>
-				<label>Pivot Value: </label><input class="pivotValue" type ='text'>
-				<button class="removeParent" style="display:inline" type="button" name="removepivot">Remove</button>
+		<form id="planForm" action="#" method="get">
+		<label>Plan Name:  </label><input id="newPlanName" type="text">
+		</form>
+		<form id="columnForm" action="#" method="get" style="margin-top: 15px">
+			<div class="colInfo">
+				<label>Column Name:  </label><input class="colName" type="text"><div></div>
+				<label>Type: </label>
+				<select class="typeSelect">
+					<option value="int">Integer</option>
+					<option value="decimal">Decimal</option>
+					<option value="text">Text</option>
+					<option value="enum">Enumerated</option>
+				</select>
+				<button class="darkblue ghost toggleEnums enumOnly" style="display: none">Edit values</button>
+				<button class="removeParent" style="display:inline" type="button" name="removeColumn">Remove</button>
+				<span class="enumOnly" style="display:none">
+					<p>
+						<input class="enumName" type="text"/>
+						<button type="button" class="removeParent">Remove</button>
+					</p>
+					<button class="addFirstSibling" type="button">Add Value</button>
+				</span>
 			</div>
-			<span class="addFirstSibling"><button type="button" name="addPivot">Add Pivot Value</button></span>
-          </div>
-        </div>
+			<span class="addFirstSibling"><button type="button" name="addColumn">Add Column</button></span>
+		</form>
 
-    </form>
+		<form id="pivotForm" action="#" method="get" style="margin-top: 15px">
+			<label>Pivot Name: </label><input id="pivotName" class ="pivName" type ='text'>
+			<div>
+			  <div>
+				<div>
+					<label>Pivot Value: </label><input class="pivotValue" type ='text'>
+					<button class="removeParent" style="display:inline" type="button" name="removepivot">Remove</button>
+				</div>
+				<span class="addFirstSibling"><button type="button" name="addPivot">Add Pivot Value</button></span>
+			  </div>
+			</div>
+		</form>
 
-      <button onclick="createNewPlan()"><b>Confirm</b></button>
+		<form id="permissionsForm" action="#" method="get" style="margin-top: 15px">
+			<label>Read/Write Users </label>
+			<div>
+			  <div>
+				<div>
+					<label>User: </label><select class="readWriteUserSelect"></select>
+					<button class="removeParent" style="display:inline" type="button">Remove</button>
+				</div>
+				<span class="addFirstSibling"><button type="button" name="addPivot">Add User</button></span>
+			  </div>
+			</div>
+			<label>Read Only Users </label>
+			<div>
+			  <div>
+				<div>
+					<label>User: </label><select class="readOnlyUserSelect"></select>
+					<button class="removeParent" style="display:inline" type="button">Remove</button>
+				</div>
+				<span class="addFirstSibling"><button type="button" name="addPivot">Add User</button></span>
+			  </div>
+			</div>
+		</form>
+
+		<button onclick="createNewPlan()"><b>Confirm</b></button>
     </div>
 
     <div id="tableContainer">

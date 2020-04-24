@@ -15,10 +15,8 @@ var s3 = new AWS.S3({
   params: { Bucket: bucketName }
 });
 
-
 // Converts a CSV file (with header) to a JSON file
 function convertCSV(csv) {
-  //console.log(csv)
   Papa.parse(csv.toString(), {
     header: true,
     newline: "}",

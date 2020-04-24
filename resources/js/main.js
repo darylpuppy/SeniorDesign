@@ -245,8 +245,9 @@ function loadPlanData(file, isDataView) { //callback from downloadFile
 function loadPlanDef(file, isDataView) { //callback from downloadFile
 	this.columnDefs = file.columns;
 	this.pivotColumn = file.pivotColumn;
+	var editable = !file.readWriteUsers
+		|| file.readWriteUsers.some((user) => user == "Everyone" || user == sessionStorage.getItem("email"));
 	if (isDataView){
-		console.log(this.columnDefs);
 		for (var columnDef of this.columnDefs){
 			delete columnDef.field;
 			columnDef.valueGetter = function(params){
@@ -291,6 +292,8 @@ function loadPlanDef(file, isDataView) { //callback from downloadFile
 				params.data[params.colDef.colID] = newVal;
 				return true;
 			}
+
+			colDef.editable = editable;
 		}
 		gridOptions.api.setColumnDefs(this.columnDefs);
 		$(tableHeader).text("Pivot Name " +  this.pivotColumn.name);
@@ -300,7 +303,7 @@ function loadPlanDef(file, isDataView) { //callback from downloadFile
 	else{
 		for(var column of this.pivotColumn.types){
 			this.baseColumnOptions.push({
-				editable: true,
+				editable: editable,
 				resizable: true,
 				filter: false,
 				sortable: false,

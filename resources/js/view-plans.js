@@ -27,9 +27,10 @@ var gridOptions = {
 var planToLoad = "";
 var planToDelete = "";
 var planNameToCreate = "";
-var columnDefinitions = {pivotColumn: {}, columns: []};
+var planDefinition = {pivotColumn: {}, columns: [], readWriteUsers: [], readOnlyUsers: []};
 var rowDefinitions = [];
 var emptyRow = {};
+var users;
 
 // the first 4 columns are hard coded
 var idDef = {
@@ -107,22 +108,54 @@ var defaultCountCol = {
 
 emptyRow["ID"] = randRange(10000000, 99999999);
 
-columnDefinitions.columns.push(idDef);
+planDefinition.columns.push(idDef);
 
 rowDefinitions.emptyRow = emptyRow;
 
 initGrid(gridOptions);
+loadUserDropdown();
+
+function loadUserDropdown(){
+	file = s3.getObject({
+		Bucket: bucketName,
+		Key: "users.json"
+	}, function (err, data){
+		if(err){
+			alert("Error retrieving users file: ", err.message);
+			console.log(err);
+			return false;
+		}
+		else {
+			data = data.Body.toString();
+			userList = JSON.parse(data);
+			this.users = userList.map(user => user.Email);
+
+			var $userDropdown = $(".readWriteUserSelect");
+			$userDropdown.append($("<option />").val("Everyone").text("Everyone"));
+			for (var user of this.users){
+				$userDropdown.append($("<option />").val(user).text(user));
+			}
+			
+			$userDropdown = $(".readOnlyUserSelect");
+			$userDropdown.append($("<option />").val("Everyone").text("Everyone"));
+			for (var user of this.users){
+				$userDropdown.append($("<option />").val(user).text(user));
+			}
+			return false;
+		}
+	});
+}
 
 // Initialize the grid with column definitions and row data
 function initGrid() {
-  // Find the grid div element in index.html
-  var eGridDiv = document.querySelector('#grid');
+	// Find the grid div element in index.html
+	var eGridDiv = document.querySelector('#grid');
 
-  // Create the grid passing in the div to use together with the columns & data we want to use
-  new agGrid.Grid(eGridDiv, gridOptions);
+	// Create the grid passing in the div to use together with the columns & data we want to use
+	new agGrid.Grid(eGridDiv, gridOptions);
 
-  // Download a the plan names from s3 and load into grid
-  downloadPlanDefs();
+	// Download a the plan names from s3 and load into grid
+	downloadPlanDefs();
 }
 
 // create handler function
@@ -188,11 +221,14 @@ $(".typeSelect").change(function(){
 })
 
 function createNewPlan() {
-	if(sessionStorage.getItem("permission") === "S"){
-		// getting all the plan data from the html form
-		var columns = $("#columnForm > .colInfo");
-		var pivotValues = $(".pivotValue");
-		planNameToCreate = document.getElementById("newPlanName").value;
+  
+    if(sessionStorage.getItem("permission") === "S"){
+      // getting all the plan data from the html form
+      var columns = $("#columnForm > .colInfo");
+	  var pivotValues = $(".pivotValue");
+	  var readWriteUsers = $(".readWriteUserSelect");
+	  var readOnlyUsers = $(".readOnlyUserSelect");
+      planNameToCreate = document.getElementById("newPlanName").value;
       
 		columnDefinitions.columns.push(defaultNameCol);
 		columnDefinitions.columns.push(defaultLeaderCol);
@@ -212,22 +248,29 @@ function createNewPlan() {
 				}
 			}
 
-			if($(column).find(".colName").first().val()) {
-				var columnInfo = {
-					"editable": true,
-          			"resizable": true,
-          			"filter": false,
-          			"sortable": false,
-					"headerName": $(column).find(".colName").first().val(),
-					"field": $(column).find(".colName").first().val(),
-					"colID": $(column).find(".colName").first().val(),
-					"type": $(column).find(".typeSelect").first().find(":selected").index(),
-					"enums": types
-				};
-				columnDefinitions.columns.push(columnInfo);
-			}
-		}
+          if($(column).find(".colName").first().val()) {
+            var columnInfo = {
+				"editable": true,
+          		"resizable": true,
+          		"filter": false,
+          		"sortable": false,
+				"headerName": $(column).find(".colName").first().val(),
+				"field": $(column).find(".colName").first().val(),
+				"colID": $(column).find(".colName").first().val(),
+				"type": $(column).find(".typeSelect").first().find(":selected").index(),
+				"enums": types
+            };
+            this.planDefinition.columns.push(columnInfo);
+            emptyRow[$(column).find(".typeSelect").first().val()] = "";
+          }
+      }
 
+	  for (var user of readWriteUsers){
+	  	  this.planDefinition.readWriteUsers.push($(user).val());
+	  }
+	  for (var user of readOnlyUsers){
+	  	  this.planDefinition.readOnlyUsers.push($(user).val());
+	  }
 		for (var column of columnDefinitions.columns){
 			if (column.type == 0 || column.type == 1){
 				emptyRow[column.field] = 0;
@@ -237,22 +280,21 @@ function createNewPlan() {
 			}
 		}
 
-		columnDefinitions.pivotColumn.name = document.getElementById("pivotName").value; // save the name of the pivote value
-		columnDefinitions.pivotColumn.types = [];
-		var allData = [];
-		for (var pivotValue of pivotValues){
-	  		columnDefinitions.pivotColumn.types.push($(pivotValue).val());
-			allData.push({pageName: $(pivotValue).val(), pageData: [emptyRow]})
-		}
-		allData = JSON.stringify(allData);
-		columnDefinitions = JSON.stringify(columnDefinitions);
-		console.log(columnDefinitions);
+      this.planDefinition.pivotColumn.name = document.getElementById("pivotName").value; // save the name of the pivote value
+	  this.planDefinition.pivotColumn.types = [];
+	  var allData = [];
+	  for (var pivotValue of pivotValues){
+	  	  this.planDefinition.pivotColumn.types.push($(pivotValue).val());
+		  allData.push({pageName: $(pivotValue).val(), pageData: [emptyRow]})
+	  }
+      allData = JSON.stringify(allData);
+      this.planDefinition = JSON.stringify(planDefinition);
 
-		uploadNewPlan(allData, columnDefinitions);
-	}
-	else {
-		alert("You do not have permission to create a plan");
-	}
+      uploadNewPlan(allData, planDefinition);
+    }
+    else {
+      alert("You do not have permission to create a plan");
+    }
 }
 
 function manageUsers(){
@@ -279,7 +321,7 @@ function getPlanNameToCreate() {
 }
 
 function getColumnDefinitions(){
-  return columnDefinitions;
+  return planDefinition;
 }
 
 function getEmptyRow(){
