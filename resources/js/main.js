@@ -248,10 +248,8 @@ function loadPlanDef(file, isDataView) { //callback from downloadFile
 	if (isDataView){
 		console.log(this.columnDefs);
 		for (var columnDef of this.columnDefs){
-			console.log(columnDef);
 			delete columnDef.field;
 			columnDef.valueGetter = function(params){
-				console.log(params);
 				return params.data[params.colDef.colID];
 			};
 			columnDef.valueSetter = function(params){
