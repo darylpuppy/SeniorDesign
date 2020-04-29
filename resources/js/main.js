@@ -293,7 +293,7 @@ function loadPlanDef(file, isDataView) { //callback from downloadFile
 				return true;
 			}
 
-			colDef.editable = editable;
+			columnDef.editable = editable;
 		}
 		gridOptions.api.setColumnDefs(this.columnDefs);
 		$(tableHeader).text("Pivot Name " +  this.pivotColumn.name);
