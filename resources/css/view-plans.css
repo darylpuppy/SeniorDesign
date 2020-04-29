@@ -17,6 +17,7 @@ body {
   border-right-width: 10px;
   padding-left: 25px;
   border-radius: 15px 30px;
+  
 }
 
 #logOut {
@@ -34,6 +35,21 @@ body {
   border-radius: 5px;
 }
 
+#dropzone {
+  position: fixed;
+  background-color: #009FE2;
+  padding: 0;
+  margin: 0;
+  top: 0px;
+  bottom: 0px;
+  right: 0px;
+  left:0px;
+  width: 100%;
+  height: 100%;
+  opacity: 0%;
+  transition: all 0.4s ease .0s;
+}
+
 /* Parent class for all ghost styled buttons */
 .ghost {
   font-family: 'Roboto', sans-serif;
@@ -46,6 +62,8 @@ body {
   display: inline-block;
   transition: all 0.1s ease 0s;
   border-radius: 2px;
+  position: relative;
+  z-index: 10000;
 }
 
 .ghost:hover {
@@ -94,6 +112,8 @@ body {
   padding-left: 10px;
   padding-top: 10px;
   display: none;
+  position: relative;
+  z-index: 10000;
 }
 
 #tableContainer {
@@ -116,6 +136,7 @@ body {
   bottom: 0;
   right: 0;
   max-height: 750px;
+  z-index: 2;
 }
 
 input[type=text]{
@@ -124,4 +145,6 @@ input[type=text]{
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
+  position: relative;
+  z-index: 100000;
 }

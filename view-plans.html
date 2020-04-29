@@ -1,10 +1,18 @@
 <!--Note: Order matters here, be careful!-->
 <!doctype html>
 <html lang="en">
+
   <head>
     <!--Loads ag-Grid scripts from 'unpkg' CDN (Content Delivery Network)-->
     <script src="https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.noStyle.js"></script> <!--ag-Grid component-->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <!--Drag and drop
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/p5@1.0.0/lib/p5.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/p5@1.0.0/lib/addons/p5.sound.min.js"></script>
+    -->
+    <!--currently doesnt work due to a merge conflict with another API-->
+
     <!--Stylesheets-->
     <link rel="stylesheet" href="https://unpkg.com/ag-grid-community/dist/styles/ag-grid.css"> <!--grid structure stylesheet-->
     <link rel="stylesheet" href="https://unpkg.com/ag-grid-community/dist/styles/ag-theme-balham-dark.css"> <!--grid theme-->
@@ -12,17 +20,25 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./resources/css/view-plans.css" type="text/css">
   </head>
+
+  <div id="dropzone" >
+  </div>
+
   <body>
     <div id="title"><h1>MediaKind Workforce Planning Tool</h1></div>
     <div id="logOut">
       <button id="loadPlan" onclick="location.href = './login.html'; sessionStorage.clear();" class="blue ghost">LogOut</button>
     </div>
-
     <div id="toolbar">
       <button id="createNewPlan" class="darkblue ghost">Create New Plan</button>
       <button onclick="deletePlan()" class="pink ghost">Delete Plan</button>
       <button id="loadPlan" onclick="location.href = './grid.html';" class="blue ghost">Load Plan</button>
       <button onclick="manageUsers()" class="darkblue ghost">Manage Users</button>
+      <!--
+      <button onclick="importPlan()" class="darkblue ghost">Import</button>
+      -->
+      <button onclick="importPlan()" class="darkblue ghost">export</button>
+      </body>
     </div>
 
     <div id="newPlan">
@@ -94,6 +110,7 @@
     <div id="tableContainer">
       <div id="grid" class="ag-theme-balham-dark"></div>
     </div>
+
 
     <!--AWS SDK stuff-->
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.283.1.min.js"></script>
