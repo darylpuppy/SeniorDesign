@@ -179,24 +179,16 @@ function saveChangesToUserInfo(){
 		newRowData = convertCSV(newRowData);
 		newRowData = JSON.parse(newRowData);
 
-		console.log(rowData);
-		console.log(newRowData);
-		for (let i = 0;i < newRowData.length;i++){
-			origRow = rowData[i];
-			newRow  = newRowData[i];
-			if (newRow.Permission != origRow.Permission){
-				var upload = new AWS.S3.ManagedUpload({
-					params: {
-						Bucket: bucketName,
-						Key: "permissions.json",
-						Body: JSON.stringify(newRowData),
-						ACL: "public-read"
-					}
-				});
-
-				promise = upload.promise();
+		var upload = new AWS.S3.ManagedUpload({
+			params: {
+				Bucket: bucketName,
+				Key: "permissions.json",
+				Body: JSON.stringify(newRowData),
+				ACL: "public-read"
 			}
-		}
+		});
+
+		promise = upload.promise();
 		
 		Promise.all([passwordPromise, promise]).then(
 			function(data) {
