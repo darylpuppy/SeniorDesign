@@ -27,7 +27,7 @@ var gridOptions = {
 var planToLoad = "";
 var planToDelete = "";
 var planNameToCreate = "";
-var planDefinition = {pivotColumn: {}, columns: [], readWriteUsers: [], readOnlyUsers: []};
+var planDefinition = {pivotColumn: {}, columns: [], readWriteUsers: [], readOnlyUsers: [], columns: []};
 var rowDefinitions = [];
 var emptyRow = {};
 var users;
@@ -221,20 +221,19 @@ $(".typeSelect").change(function(){
 })
 
 function createNewPlan() {
-  
     if(sessionStorage.getItem("permission") === "S"){
-      // getting all the plan data from the html form
-      var columns = $("#columnForm > .colInfo");
-	  var pivotValues = $(".pivotValue");
-	  var readWriteUsers = $(".readWriteUserSelect");
-	  var readOnlyUsers = $(".readOnlyUserSelect");
-      planNameToCreate = document.getElementById("newPlanName").value;
+		// getting all the plan data from the html form
+		var columns = $("#columnForm > .colInfo");
+		var pivotValues = $(".pivotValue");
+		var readWriteUsers = $(".readWriteUserSelect");
+		var readOnlyUsers = $(".readOnlyUserSelect");
+		planNameToCreate = document.getElementById("newPlanName").value;
       
-		columnDefinitions.columns.push(defaultNameCol);
-		columnDefinitions.columns.push(defaultLeaderCol);
-		columnDefinitions.columns.push(defaultLocationCol);
-		columnDefinitions.columns.push(defaultTypeCol);
-		columnDefinitions.columns.push(defaultCountCol);
+		this.planDefinition.columns.push(defaultNameCol);
+		this.planDefinition.columns.push(defaultLeaderCol);
+		this.planDefinition.columns.push(defaultLocationCol);
+		this.planDefinition.columns.push(defaultTypeCol);
+		this.planDefinition.columns.push(defaultCountCol);
 
 		// creating a JSON object out of columnDefinitions, will have to tweak
 		// after implementing pages
@@ -248,21 +247,21 @@ function createNewPlan() {
 				}
 			}
 
-          if($(column).find(".colName").first().val()) {
-            var columnInfo = {
-				"editable": true,
-          		"resizable": true,
-          		"filter": false,
-          		"sortable": false,
-				"headerName": $(column).find(".colName").first().val(),
-				"field": $(column).find(".colName").first().val(),
-				"colID": $(column).find(".colName").first().val(),
-				"type": $(column).find(".typeSelect").first().find(":selected").index(),
-				"enums": types
-            };
-            this.planDefinition.columns.push(columnInfo);
-            emptyRow[$(column).find(".typeSelect").first().val()] = "";
-          }
+			if($(column).find(".colName").first().val()) {
+				var columnInfo = {
+					"editable": true,
+					"resizable": true,
+					"filter": false,
+					"sortable": false,
+					"headerName": $(column).find(".colName").first().val(),
+					"field": $(column).find(".colName").first().val(),
+					"colID": $(column).find(".colName").first().val(),
+					"type": $(column).find(".typeSelect").first().find(":selected").index(),
+					"enums": types
+				};
+				this.planDefinition.columns.push(columnInfo);
+				emptyRow[$(column).find(".typeSelect").first().val()] = "";
+			}
       }
 
 	  for (var user of readWriteUsers){
@@ -271,7 +270,7 @@ function createNewPlan() {
 	  for (var user of readOnlyUsers){
 	  	  this.planDefinition.readOnlyUsers.push($(user).val());
 	  }
-		for (var column of columnDefinitions.columns){
+		for (var column of this.planDefinition.columns){
 			if (column.type == 0 || column.type == 1){
 				emptyRow[column.field] = 0;
 			}
