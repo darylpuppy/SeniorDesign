@@ -88,8 +88,8 @@ var defaultTypeCol = {
   "headerName": "Type",
   "field": "Type",
   "colID": "Type",
-  "type": 2,
-  "enums": 'Text'
+  "type": 3,
+  "enums": ['EMP', 'CON']
 };
 
 var defaultCountCol = {

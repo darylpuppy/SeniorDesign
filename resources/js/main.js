@@ -310,11 +310,14 @@ function loadPlanDef(file, isDataView) { //callback from downloadFile
 				headerName: column,
 				field: column,
 				valueSetter: function(params){
+					console.log(column);
 					try{
-						params.data[column] = Number(params.newValue);
+						params.data[params.colDef.colID] = Number(params.newValue);
+						console.log(params.data);
 						return true;
 					}
 					catch(err){
+						console.log(err);
 						return false;
 					}
 				},
