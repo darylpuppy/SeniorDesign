@@ -144,8 +144,21 @@ function checkCredentials(){
             if(userList[i]["Password"] === loginForm.elements["password"].value){
               // set the username and permission to check what the user can do
               sessionStorage.setItem('email', loginForm.elements["email"].value);
-              sessionStorage.setItem('permission', userList[i]["Permission"]);
-              window.location.href = "view-plans.html";
+			  file = s3.getObject({
+			  	  Bucket: bucketName,
+				  Key: "permissions.json"
+			  }, function (err, data){
+			  	  if (err){
+				  	  alert("Error retrieving users file: ", err.message);
+					  console.log(err);
+					  return false;
+				  }
+				  else{
+					data = JSON.parse(data.Body.toString());
+					  sessionStorage.setItem('permission', data.find(user => user.Email == userList[i]["Email"]).Permission);
+					  window.location.href = "view-plans.html";
+				  }
+			  })
               return true;
             }
           }
