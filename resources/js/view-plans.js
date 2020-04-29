@@ -27,7 +27,7 @@ var gridOptions = {
 var planToLoad = "";
 var planToDelete = "";
 var planNameToCreate = "";
-var planDefinition = {pivotColumn: {}, columns: [], readWriteUsers: [], readOnlyUsers: []};
+var planDefinition = {pivotColumn: {}, columns: [], readWriteUsers: [], readOnlyUsers: [], columns: []};
 var rowDefinitions = [];
 var emptyRow = {};
 var users;
@@ -40,8 +40,8 @@ var idDef = {
   "sortable": false,
   "headerName": "ID",
   "field": "ID",
-  "colID": "ID"
-  
+  "colID": "ID",
+  "type": 0
 };
 
 var defaultNameCol = {
@@ -221,52 +221,47 @@ $(".typeSelect").change(function(){
 })
 
 function createNewPlan() {
-  
     if(sessionStorage.getItem("permission") === "S"){
-      // getting all the plan data from the html form
-      var columns = $("#columnForm > .colInfo");
-	  var pivotValues = $(".pivotValue");
-	  var readWriteUsers = $(".readWriteUserSelect");
-	  var readOnlyUsers = $(".readOnlyUserSelect");
-      planNameToCreate = document.getElementById("newPlanName").value;
+		// getting all the plan data from the html form
+		var columns = $("#columnForm > .colInfo");
+		var pivotValues = $(".pivotValue");
+		var readWriteUsers = $(".readWriteUserSelect");
+		var readOnlyUsers = $(".readOnlyUserSelect");
+		planNameToCreate = document.getElementById("newPlanName").value;
       
-      // creating a JSON object out of columnDefinitions, will have to tweak
-      // after implementing pages
-      for(var i = 0 ; i < columns.length; i++) {
-	      var column = columns[i];
-		  var types = "";
-		  if ($(columns[i]).children(".typeSelect").first().val() === "enum"){
-			var enumVals = $(column).find(".enumName");
-			for (var j = 0;j < enumVals.length;j++){
-				types += $(enumVals[j]).val() + " ";
-      }
-      }
-      columnDefinitions.columns.push(defaultNameCol);
-      emptyRow[$(column).find("Text").first().val()] = "";
-      columnDefinitions.columns.push(defaultLeaderCol);
-      emptyRow[$(column).find("Text").first().val()] = "";
-      columnDefinitions.columns.push(defaultLocationCol);
-      emptyRow[$(column).find("Text").first().val()] = "";
-      columnDefinitions.columns.push(defaultTypeCol);
-      emptyRow[$(column).find("Text").first().val()] = "";
-      columnDefinitions.columns.push(defaultCountCol);
-      emptyRow[$(column).find("Integer").first().val()] = 0;
+		this.planDefinition.columns.push(defaultNameCol);
+		this.planDefinition.columns.push(defaultLeaderCol);
+		this.planDefinition.columns.push(defaultLocationCol);
+		this.planDefinition.columns.push(defaultTypeCol);
+		this.planDefinition.columns.push(defaultCountCol);
 
-          if($(column).find(".colName").first().val()) {
-            var columnInfo = {
-				"editable": true,
-          		"resizable": true,
-          		"filter": false,
-          		"sortable": false,
-				"headerName": $(column).find(".colName").first().val(),
-				"field": $(column).find(".colName").first().val(),
-				"colID": $(column).find(".colName").first().val(),
-				"type": $(column).find(".typeSelect").first().find(":selected").index(),
-				"enums": types
-            };
-            this.planDefinition.columns.push(columnInfo);
-            emptyRow[$(column).find(".typeSelect").first().val()] = "";
-          }
+		// creating a JSON object out of columnDefinitions, will have to tweak
+		// after implementing pages
+		for(var i = 0 ; i < columns.length; i++) {
+			var column = columns[i];
+			var types = [];
+			if ($(columns[i]).children(".typeSelect").first().val() === "enum"){
+				var enumVals = $(column).find(".enumName");
+				for (var j = 0;j < enumVals.length;j++){
+					types.push($(enumVals[j]).val());
+				}
+			}
+
+			if($(column).find(".colName").first().val()) {
+				var columnInfo = {
+					"editable": true,
+					"resizable": true,
+					"filter": false,
+					"sortable": false,
+					"headerName": $(column).find(".colName").first().val(),
+					"field": $(column).find(".colName").first().val(),
+					"colID": $(column).find(".colName").first().val(),
+					"type": $(column).find(".typeSelect").first().find(":selected").index(),
+					"enums": types
+				};
+				this.planDefinition.columns.push(columnInfo);
+				emptyRow[$(column).find(".typeSelect").first().val()] = "";
+			}
       }
 
 	  for (var user of readWriteUsers){
@@ -275,6 +270,14 @@ function createNewPlan() {
 	  for (var user of readOnlyUsers){
 	  	  this.planDefinition.readOnlyUsers.push($(user).val());
 	  }
+		for (var column of this.planDefinition.columns){
+			if (column.type == 0 || column.type == 1){
+				emptyRow[column.field] = 0;
+			}
+			else{
+				emptyRow[column.field] = "";
+			}
+		}
 
       this.planDefinition.pivotColumn.name = document.getElementById("pivotName").value; // save the name of the pivote value
 	  this.planDefinition.pivotColumn.types = [];
