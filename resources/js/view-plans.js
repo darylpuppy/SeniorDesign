@@ -100,7 +100,7 @@ var defaultCountCol = {
   "headerName": "Count",
   "field": "Count",
   "colID": "Count",
-  "type": 0,
+  "type": 1,
   "enums": 'Integer'
 };
 
