@@ -248,9 +248,52 @@ function loadPlanDef(file, isDataView) { //callback from downloadFile
 	var editable = !file.readWriteUsers
 		|| file.readWriteUsers.some((user) => user == "Everyone" || user == sessionStorage.getItem("email"));
 	if (isDataView){
+		for (var columnDef of this.columnDefs){
+			delete columnDef.field;
+			columnDef.valueGetter = function(params){
+				return params.data[params.colDef.colID];
+			};
+			columnDef.valueSetter = function(params){
+				var newVal;
+				if (params.colDef.type == 0){
+					try{
+						newVal = Number(params.newValue);
+						if (!Number.isInteger(newVal)){
+							return false;
+						}
+					}
+					catch(err){
+						return false;
+					}
+				}
+				else if (params.colDef.type == 1){
+					try{
+						newVal = Number(params.newValue);
+						if (Number.isNaN(newVal)){
+							return false;
+						}
+					}
+					catch(err){
+						return false;
+					}
+				}
+				else if (params.colDef.type == 2){
+					newVal = params.newValue;
+				}
+				else if (params.colDef.type == 3){
+					newVal = params.newValue;
+					if (!params.colDef.enums.some((val) => val == newVal)){
+						return false;
+					}
+				}
+				else{
+					newVal = params.newValue;
+				}
+				params.data[params.colDef.colID] = newVal;
+				return true;
+			}
 
-		for (var colDef of this.columnDefs){
-			colDef.editable = editable;
+			columnDef.editable = editable;
 		}
 		gridOptions.api.setColumnDefs(this.columnDefs);
 		$(tableHeader).text("Pivot Name " +  this.pivotColumn.name);
@@ -266,6 +309,15 @@ function loadPlanDef(file, isDataView) { //callback from downloadFile
 				sortable: false,
 				headerName: column,
 				field: column,
+				valueSetter: function(params){
+					try{
+						params.data[column] = Number(params.newValue);
+						return true;
+					}
+					catch(err){
+						return false;
+					}
+				},
 				colID: column
 			});
 		}
