@@ -178,9 +178,9 @@ function saveChangesToUserInfo(){
 		var newRowData = gridOptions.api.getDataAsCsv();
 		newRowData = convertCSV(newRowData);
 		newRowData = JSON.parse(newRowData);
-		// something is adding an extra blank user to the list, so we remove it here
-		newRowData.length--;
 
+		console.log(rowData);
+		console.log(newRowData);
 		for (let i = 0;i < newRowData.length;i++){
 			origRow = rowData[i];
 			newRow  = newRowData[i];
@@ -201,7 +201,6 @@ function saveChangesToUserInfo(){
 		Promise.all([passwordPromise, promise]).then(
 			function(data) {
 				alert("Successfully updated the user file");
-				this.returnToPlans();
 			},
 			function(err) {
 				return alert("There was an error updating the user file: ", err.message);
