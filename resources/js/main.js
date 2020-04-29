@@ -310,14 +310,11 @@ function loadPlanDef(file, isDataView) { //callback from downloadFile
 				headerName: column,
 				field: column,
 				valueSetter: function(params){
-					console.log(column);
-					try{
+					if (!Number.isNaN(Number(params.newValue)){
 						params.data[params.colDef.colID] = Number(params.newValue);
-						console.log(params.data);
 						return true;
 					}
-					catch(err){
-						console.log(err);
+					else{
 						return false;
 					}
 				},

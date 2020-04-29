@@ -118,7 +118,7 @@ loadUserDropdown();
 function loadUserDropdown(){
 	file = s3.getObject({
 		Bucket: bucketName,
-		Key: "users.json"
+		Key: "permissions.json"
 	}, function (err, data){
 		if(err){
 			alert("Error retrieving users file: ", err.message);
